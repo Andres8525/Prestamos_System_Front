@@ -1,0 +1,96 @@
+<div class="list-container">
+  <div class="page-header">
+    <h1>Gestión de Pagos</h1>
+    <div class="header-actions">
+      <div class="pending-badge">
+        <span class="pending-label">Pendientes</span>
+        <span class="pending-count">{{ pagosPendientes }}</span>
+      </div>
+      <button class="btn btn-warning" (click)="toggleAtrasados()">
+        Ver Atrasados ({{ pagosAtrasados.length }})
+      </button>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (mostraAtrasados && pagosAtrasados.length > 0) {
+    <div class="card atrasados-card">
+      <h2 class="atrasados-title">Pagos Atrasados</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Préstamo</th>
+              <th>Monto</th>
+              <th>N.°</th>
+              <th>Fecha Programada</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (pago of pagosAtrasados; track pago.id) {
+              <tr class="row-atrasado">
+                <td>{{ getNombrePrestamoCliente(pago.prestamoId) }}</td>
+                <td>{{ pago.monto | currency }}</td>
+                <td>{{ pago.numero }}</td>
+                <td>{{ pago.fechaProgramada | date: 'dd/MM/yyyy' }}</td>
+                <td><span [ngClass]="getEstadoClass(pago.estado)" class="badge">{{ pago.estado }}</span></td>
+                <td>
+                  <button class="btn btn-success btn-sm" (click)="marcarPagado(pago.id)">
+                    Registrar Pago
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  @if (cargando) {
+    <div class="loading-text">Cargando...</div>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Préstamo</th>
+            <th>Monto</th>
+            <th>N.°</th>
+            <th>Fecha Programada</th>
+            <th>Fecha Pago</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pago of pagos; track pago.id) {
+            <tr>
+              <td>{{ getNombrePrestamoCliente(pago.prestamoId) }}</td>
+              <td>{{ pago.monto | currency }}</td>
+              <td>{{ pago.numero }}</td>
+              <td>{{ pago.fechaProgramada | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ pago.fechaPago ? (pago.fechaPago | date: 'dd/MM/yyyy') : '—' }}</td>
+              <td><span [ngClass]="getEstadoClass(pago.estado)" class="badge">{{ pago.estado }}</span></td>
+              <td class="actions-cell">
+                @if (!pago.fechaPago) {
+                  <button class="btn btn-success btn-sm" (click)="marcarPagado(pago.id)">
+                    Registrar Pago
+                  </button>
+                }
+                <button class="btn btn-danger btn-sm" (click)="eliminarPago(pago.id)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

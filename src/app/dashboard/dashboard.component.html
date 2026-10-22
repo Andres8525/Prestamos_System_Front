@@ -1,0 +1,85 @@
+<div class="dashboard">
+  <div class="page-header">
+    <h1>Panel de Control</h1>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (cargando) {
+    <div class="loading-text">Cargando datos...</div>
+  }
+
+  @if (!cargando) {
+    <div class="stats-grid">
+      <div class="stat-card stat-total">
+        <p class="stat-label">Total Préstamos</p>
+        <p class="stat-value">{{ getTotalClientes() }}</p>
+      </div>
+      <div class="stat-card stat-green">
+        <p class="stat-label">Al Día</p>
+        <p class="stat-value">{{ clientesAlDia.length }}</p>
+      </div>
+      <div class="stat-card stat-yellow">
+        <p class="stat-label">Pendientes</p>
+        <p class="stat-value">{{ clientesPendientes.length }}</p>
+      </div>
+      <div class="stat-card stat-red">
+        <p class="stat-label">Atrasados</p>
+        <p class="stat-value">{{ clientesAtrasados.length }}</p>
+      </div>
+      <div class="stat-card stat-blue">
+        <p class="stat-label">Pagos Pendientes</p>
+        <p class="stat-value">{{ pagosPendientes }}</p>
+      </div>
+    </div>
+
+    <div class="sections-grid">
+      <div class="card">
+        <h2 class="section-title section-green">Al Día</h2>
+        @if (clientesAlDia.length === 0) {
+          <div class="empty-state">Sin registros</div>
+        } @else {
+          <div class="client-list">
+            @for (prestamo of clientesAlDia; track prestamo.id) {
+              <div class="client-row">
+                <span class="client-name">{{ prestamo.clienteNombre }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <h2 class="section-title section-yellow">Pendientes</h2>
+        @if (clientesPendientes.length === 0) {
+          <div class="empty-state">Sin registros</div>
+        } @else {
+          <div class="client-list">
+            @for (prestamo of clientesPendientes; track prestamo.id) {
+              <div class="client-row">
+                <span class="client-name">{{ prestamo.clienteNombre }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <h2 class="section-title section-red">Atrasados</h2>
+        @if (clientesAtrasados.length === 0) {
+          <div class="empty-state">Sin registros</div>
+        } @else {
+          <div class="client-list">
+            @for (prestamo of clientesAtrasados; track prestamo.id) {
+              <div class="client-row">
+                <span class="client-name">{{ prestamo.clienteNombre }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

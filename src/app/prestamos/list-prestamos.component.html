@@ -1,0 +1,87 @@
+<div class="list-container">
+  <div class="page-header">
+    <h1>Gestión de Préstamos</h1>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="actualizarEstados()">
+        Actualizar Estados
+      </button>
+      <button class="btn btn-primary" (click)="toggleFormulario()">
+        {{ mostraFormulario ? 'Cancelar' : '+ Nuevo Préstamo' }}
+      </button>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (mostraFormulario) {
+    <div class="card">
+      <h2 class="form-title">Crear Préstamo</h2>
+      <form (ngSubmit)="guardarPrestamo()" class="form-grid">
+        <div class="form-group">
+          <label for="cliente">Cliente</label>
+          <select id="cliente" [(ngModel)]="nuevoPresta.clienteId" name="cliente">
+            <option [ngValue]="undefined">Seleccionar cliente</option>
+            @for (cliente of clientes; track cliente.id) {
+              <option [ngValue]="cliente.id">{{ cliente.nombre }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="monto">Monto</label>
+          <input type="number" id="monto" [(ngModel)]="nuevoPresta.monto"
+                 name="monto" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo de Liquidación</label>
+          <select id="tipo" [(ngModel)]="nuevoPresta.tipoLiquidacion" name="tipo">
+            @for (tipo of tiposLiquidacion; track tipo) {
+              <option [value]="tipo">{{ tipo }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (cargando) {
+    <div class="loading-text">Cargando...</div>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Monto</th>
+            <th>Tasa</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Fecha Inicio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (prestamo of prestamos; track prestamo.id) {
+            <tr>
+              <td>{{ prestamo.clienteNombre || obtenerNombreCliente(prestamo.clienteId) }}</td>
+              <td>{{ prestamo.monto | currency }}</td>
+              <td>{{ prestamo.tasaInteres }}%</td>
+              <td>{{ prestamo.tipoLiquidacion }}</td>
+              <td><span [ngClass]="getEstadoClass(prestamo.estado)" class="badge">{{ prestamo.estado }}</span></td>
+              <td>{{ prestamo.fechaInicio | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" (click)="eliminarPrestamo(prestamo.id)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
