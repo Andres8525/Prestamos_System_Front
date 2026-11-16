@@ -3,7 +3,8 @@ import { forkJoin } from 'rxjs';
 import { ClienteService } from '../services/cliente.service';
 import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { ModeloScoring, Scoring } from '../models/cobranza.model';
-import { ETIQUETAS_VARIABLES } from '../models/ml.model';
+import { ETIQUETAS_VARIABLES, PrediccionHistorica } from '../models/ml.model';
+import { MlService } from '../services/ml.service';
 
 /** Panel de IA: riesgo de incumplimiento de toda la cartera y métricas del modelo. */
 @Component({
@@ -19,7 +20,21 @@ export class ScoringRiesgoComponent implements OnInit {
   entrenando = false;
   error = '';
 
-  constructor(private clienteService: ClienteService, private cobranzaService: CobranzaService) {}
+  /** Predicciones guardadas del cliente seleccionado (de la más antigua a la más reciente). */
+  historial: PrediccionHistorica[] = [];
+  readonly Math = Math;
+
+  constructor(
+    private clienteService: ClienteService,
+    private cobranzaService: CobranzaService,
+    private ml: MlService
+  ) {}
+
+  verDetalle(r: Scoring): void {
+    this.seleccionado = r;
+    this.historial = [];
+    this.ml.prediccionesCliente(r.clienteId).subscribe({ next: (h) => (this.historial = [...h].reverse()) });
+  }
 
   ngOnInit(): void {
     this.cargar();

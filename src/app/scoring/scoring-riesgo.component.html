@@ -44,6 +44,18 @@
           </li>
         }
       </ul>
+      <h3 class="form-title" style="margin:16px 0 6px;font-size:14px">Evolución del riesgo</h3>
+      @if (historial.length) {
+        <div class="evolucion" aria-label="Evolución de la probabilidad de incumplimiento">
+          @for (h of historial; track $index) {
+            <div [ngClass]="h.nivelRiesgo.toLowerCase()" [style.height.%]="Math.max(6, h.probabilidad * 100)"
+                 [title]="(h.fecha | date: 'dd/MM/yyyy HH:mm') + ' · ' + (h.probabilidad | percent: '1.0-1') + ' · ' + h.origen"></div>
+          }
+        </div>
+        <small>{{ historial.length }} predicciones registradas (al aprobar o bloquear créditos y en el seguimiento diario).</small>
+      } @else {
+        <small>Aún no hay predicciones guardadas para este cliente. Se registran al aprobar o bloquear un crédito y en el seguimiento diario.</small>
+      }
     </div>
   }
 
@@ -70,7 +82,7 @@
               <td>{{ r.caracteristicas['tasaCuotasAtrasadas'] | percent: '1.0-0' }}</td>
               <td>{{ r.caracteristicas['tasaAbonosIncompletos'] | percent: '1.0-0' }}</td>
               <td>{{ r.prestamosAnteriores }}</td>
-              <td><button class="btn btn-primary btn-sm" (click)="seleccionado = r">Detalle</button></td>
+              <td><button class="btn btn-primary btn-sm" (click)="verDetalle(r)">Detalle</button></td>
             </tr>
           } @empty {
             <tr><td colspan="10" class="empty-state">No hay clientes para evaluar</td></tr>
