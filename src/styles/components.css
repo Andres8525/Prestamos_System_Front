@@ -186,3 +186,11 @@ td small { color: var(--texto-suave); }
 .buscador input { flex: 1; border: 0; background: transparent; padding: 12px 0; font: inherit; color: var(--texto); outline: none; box-shadow: none; }
 .buscador small { white-space: nowrap; font-size: 12px; }
 .buscador-limpiar { border: 0; background: var(--superficie-2); color: var(--texto-suave); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 16px; line-height: 1; }
+
+/* Estados vacíos: mensaje centrado con ícono suave */
+.estado-vacio {
+  display: grid; place-items: center; gap: 8px; text-align: center; padding: 32px 20px;
+  color: var(--texto-suave); font-size: 13.5px; line-height: 1.5;
+  border: 1px dashed var(--borde-fuerte); border-radius: var(--radio); background: var(--superficie-2);
+}
+.estado-vacio::before { content: '✦'; font-size: 22px; color: var(--primario); opacity: 0.6; }
