@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Prestamo } from '../models/prestamo.model';
+import { Prestamo, SimulacionPrestamo, SolicitudPrestamo } from '../models/prestamo.model';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -40,8 +40,12 @@ export class PrestamoService {
     return this.http.get<number>(`${this.apiUrl}/total-mes?year=${year}&month=${month}`);
   }
 
-  crearPrestamo(clienteId: number, monto: number, tipoLiquidacion: string): Observable<Prestamo> {
-    return this.http.post<Prestamo>(this.apiUrl, { clienteId, monto, tipoLiquidacion });
+  crearPrestamo(solicitud: SolicitudPrestamo): Observable<Prestamo> {
+    return this.http.post<Prestamo>(this.apiUrl, solicitud);
+  }
+
+  simularPrestamo(solicitud: SolicitudPrestamo): Observable<SimulacionPrestamo> {
+    return this.http.post<SimulacionPrestamo>(`${this.apiUrl}/simular`, solicitud);
   }
 
   actualizarPrestamo(id: number, prestamo: Prestamo): Observable<Prestamo> {
