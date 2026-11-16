@@ -114,6 +114,25 @@
       </div>
     </div>
 
+    <div class="card actividad-vivo">
+      <h2 class="form-title">Actividad en vivo <span class="ml-chip">WebSocket</span></h2>
+      @if (actividad.length) {
+        <ul class="actividad-lista">
+          @for (e of actividad; track e.id) {
+            <li class="actividad-item">
+              <span class="actividad-icono">{{ presentacion[e.tipo]?.icono ?? '•' }}</span>
+              <div>
+                <b>{{ e.mensaje }}</b>
+                <small>{{ presentacion[e.tipo]?.etiqueta }} · {{ e.fecha | date: 'HH:mm:ss' }}</small>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="estado-vacio">Aquí aparecerán al instante los abonos, préstamos, cierres de caja y procesos de todo el equipo.</p>
+      }
+    </div>
+
     <div class="card plataforma">
       <h2 class="form-title">Estado de la plataforma</h2>
       <div class="plataforma-grid">
