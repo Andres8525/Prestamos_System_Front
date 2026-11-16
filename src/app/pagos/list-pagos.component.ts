@@ -3,6 +3,7 @@ import { PagoService } from '../services/pago.service';
 import { PrestamoService } from '../services/prestamo.service';
 import { Pago } from '../models/pago.model';
 import { Prestamo } from '../models/prestamo.model';
+import { mensajeError } from '../services/cobranza.service';
 
 @Component({
   selector: 'app-list-pagos',
@@ -91,7 +92,7 @@ export class ListPagosComponent implements OnInit {
         this.cargarPagosPendientes();
       },
       error: (err) => {
-        this.error = 'Error al marcar el pago';
+        this.error = mensajeError(err, 'Error al registrar el pago');
         console.error(err);
       }
     });
@@ -109,7 +110,7 @@ export class ListPagosComponent implements OnInit {
         this.cargarPagosPendientes();
       },
       error: (err) => {
-        this.error = 'Error al eliminar el pago';
+        this.error = mensajeError(err, 'Error al eliminar el pago');
         console.error(err);
       }
     });

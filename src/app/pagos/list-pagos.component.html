@@ -1,6 +1,6 @@
 <div class="list-container">
   <div class="page-header">
-    <h1>Gestión de Pagos</h1>
+    <h1>Cuotas del plan de pagos</h1>
     <div class="header-actions">
       <div class="pending-badge">
         <span class="pending-label">Pendientes</span>
@@ -63,6 +63,8 @@
             <th>Monto</th>
             <th>N.°</th>
             <th>Fecha Programada</th>
+            <th>Pagado</th>
+            <th>Saldo</th>
             <th>Fecha Pago</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -75,6 +77,8 @@
               <td>{{ pago.monto | currency }}</td>
               <td>{{ pago.numero }}</td>
               <td>{{ pago.fechaProgramada | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ pago.montoPagado | currency }}</td>
+              <td>{{ pago.saldo | currency }}</td>
               <td>{{ pago.fechaPago ? (pago.fechaPago | date: 'dd/MM/yyyy') : '—' }}</td>
               <td><span [ngClass]="getEstadoClass(pago.estado)" class="badge">{{ pago.estado }}</span></td>
               <td class="actions-cell">
