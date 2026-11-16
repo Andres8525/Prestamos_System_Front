@@ -3,7 +3,7 @@ import { Subject, Subscription, debounceTime, distinctUntilChanged, of, switchMa
 import { ClienteService } from '../services/cliente.service';
 import { Cliente } from '../models/cliente.model';
 import { Cobrador } from '../models/cobranza.model';
-import { CobranzaService } from '../services/cobranza.service';
+import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { WebWorkerService, descargarArchivo } from '../services/web-worker.service';
 
 @Component({
@@ -108,7 +108,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
         this.mostraFormulario = false;
       },
       error: (err) => {
-        this.error = this.extraerMensajeError(err, 'Error al crear el cliente');
+        this.error = mensajeError(err, 'Error al crear el cliente');
         console.error(err);
       }
     });
@@ -129,7 +129,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
         this.mostraFormulario = false;
       },
       error: (err) => {
-        this.error = this.extraerMensajeError(err, 'Error al actualizar el cliente');
+        this.error = mensajeError(err, 'Error al actualizar el cliente');
         console.error(err);
       }
     });
@@ -140,7 +140,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     this.clienteService.eliminarCliente(id).subscribe({
       next: () => this.cargarClientes(),
       error: (err) => {
-        this.error = this.extraerMensajeError(err, 'Error al eliminar el cliente');
+        this.error = mensajeError(err, 'Error al eliminar el cliente');
         console.error(err);
       }
     });
@@ -159,17 +159,5 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     this.nuevoCliente = { cedula: '', nombre: '', direccion: '', telefono: '' };
     this.clienteEnEdicion = null;
     this.error = '';
-  }
-
-  private extraerMensajeError(err: any, fallback: string): string {
-    if (err?.error) {
-      // { "error": "mensaje" }  →  mensaje directo
-      if (typeof err.error === 'string') return err.error;
-      if (err.error.error) return err.error.error;
-      // { "campo": "mensaje", ... }  →  primer campo con error
-      const campos = Object.entries(err.error as Record<string, string>);
-      if (campos.length > 0) return campos.map(([c, m]) => `${c}: ${m}`).join(' | ');
-    }
-    return fallback;
   }
 }
