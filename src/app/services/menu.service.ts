@@ -42,7 +42,8 @@ export class MenuService {
       titulo: 'Inteligencia',
       items: [
         { label: 'Scoring IA', route: '/scoring', icon: 'ai' },
-        { label: 'Machine Learning', route: '/ml', icon: 'ml' }
+        { label: 'Machine Learning', route: '/ml', icon: 'ml' },
+        { label: 'Asistente IA', route: '/asistente', icon: 'assistant' }
       ]
     },
     {
