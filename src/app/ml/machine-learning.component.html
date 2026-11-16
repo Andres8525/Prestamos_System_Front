@@ -14,7 +14,9 @@
   }
 
   @if (cargando && !resumen) {
-    <div class="loading-text">Cargando el modelo...</div>
+    <div class="card" aria-busy="true" aria-label="Cargando">
+      @for (i of [1, 2, 3, 4, 5, 6, 7]; track i) { <div class="esqueleto esqueleto-fila"></div> }
+    </div>
   }
 
   @if (resumen; as r) {
