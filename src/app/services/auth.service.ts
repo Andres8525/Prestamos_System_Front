@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, catchError, map, of, tap, timeout } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../environments/environment';
+import { ServidorService } from './servidor.service';
 import { EstadoEmail, RespuestaAuth, SesionGuardada, UsuarioSesion } from '../models/auth.model';
 
 const CLAVE_SESION = 'crediruta.sesion';
@@ -17,7 +18,7 @@ export class AuthService {
   /** Usuario de la sesión actual (null si no hay sesión). */
   readonly usuario$ = this.usuarioSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private servidor: ServidorService) {}
 
   get usuario(): UsuarioSesion | null {
     return this.usuarioSubject.value;
@@ -43,15 +44,12 @@ export class AuthService {
   }
 
   /**
-   * Consulta /health para "despertar" el servidor (en Render Free se duerme tras 15 minutos sin uso).
+   * "Despierta" el servidor (en Render Free se suspende tras 15 minutos sin uso).
    * Emite true si respondió y false si no lo hizo en el tiempo indicado.
+   * @deprecated use {@link ServidorService.despertar}, que además informa el estado de la conexión.
    */
   despertarServidor(esperaMs = 70000): Observable<boolean> {
-    return this.http.get(`${environment.apiUrl}/health`).pipe(
-      timeout(esperaMs),
-      map(() => true),
-      catchError(() => of(false))
-    );
+    return this.servidor.despertar(esperaMs);
   }
 
   iniciarSesion(email: string, password: string): Observable<RespuestaAuth> {
