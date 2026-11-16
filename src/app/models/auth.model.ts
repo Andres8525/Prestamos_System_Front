@@ -12,6 +12,12 @@ export interface RespuestaAuth {
   usuario: UsuarioSesion;
 }
 
+/** Respuesta del primer paso del acceso: si el email ya tiene cuenta. */
+export interface EstadoEmail {
+  email: string;
+  existe: boolean;
+}
+
 /** Sesión guardada en el navegador. */
 export interface SesionGuardada {
   token: string;
