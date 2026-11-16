@@ -37,6 +37,11 @@ export class CobranzaService {
     return this.http.post<Abono>(`${this.api}/abonos`, { prestamoId, monto, cobradorId, observacion });
   }
 
+  /** Todos los abonos registrados en una fecha (por defecto hoy). */
+  abonosDelDia(fecha?: string): Observable<Abono[]> {
+    return this.http.get<Abono[]>(`${this.api}/abonos`, { params: this.fecha(fecha) });
+  }
+
   abonosPorPrestamo(prestamoId: number): Observable<Abono[]> {
     return this.http.get<Abono[]>(`${this.api}/abonos/prestamo/${prestamoId}`);
   }

@@ -1,6 +1,13 @@
 <div class="dashboard">
   <div class="page-header">
-    <h1>Panel de Control</h1>
+    <div>
+      <h1>Panel de control</h1>
+      <p class="subtitulo">Resumen de la cartera y del recaudo de hoy</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/ruta" class="btn btn-secondary">Ver ruta de cobro</a>
+      <a routerLink="/prestamos" class="btn btn-primary">+ Nuevo préstamo</a>
+    </div>
   </div>
 
   @if (error) {
@@ -9,75 +16,100 @@
 
   @if (cargando) {
     <div class="loading-text">Cargando datos...</div>
-  }
-
-  @if (!cargando) {
+  } @else {
     <div class="stats-grid">
-      <div class="stat-card stat-total">
-        <p class="stat-label">Total Préstamos</p>
-        <p class="stat-value">{{ getTotalClientes() }}</p>
+      <div class="stat-card stat-destacada">
+        <span class="stat-icono">💼</span>
+        <p class="stat-label">Cartera por cobrar</p>
+        <p class="stat-value">{{ carteraActiva | currency }}</p>
+        <p class="stat-nota">{{ prestamosActivos }} préstamos activos</p>
       </div>
-      <div class="stat-card stat-green">
-        <p class="stat-label">Al Día</p>
-        <p class="stat-value">{{ clientesAlDia.length }}</p>
+      <div class="stat-card">
+        <span class="stat-icono verde">💵</span>
+        <p class="stat-label">Recaudado hoy</p>
+        <p class="stat-value">{{ recaudadoHoy | currency }}</p>
+        <p class="stat-nota">{{ abonosHoy.length }} abonos registrados</p>
       </div>
-      <div class="stat-card stat-yellow">
-        <p class="stat-label">Pendientes</p>
-        <p class="stat-value">{{ clientesPendientes.length }}</p>
+      <div class="stat-card">
+        <span class="stat-icono azul">🏦</span>
+        <p class="stat-label">Capital colocado</p>
+        <p class="stat-value">{{ capitalPrestado | currency }}</p>
+        <p class="stat-nota">{{ clientesActivos }} clientes con crédito</p>
       </div>
-      <div class="stat-card stat-red">
-        <p class="stat-label">Atrasados</p>
-        <p class="stat-value">{{ clientesAtrasados.length }}</p>
+      <div class="stat-card">
+        <span class="stat-icono rojo">⚠️</span>
+        <p class="stat-label">Saldo en mora</p>
+        <p class="stat-value">{{ saldoEnMora | currency }}</p>
+        <p class="stat-nota">{{ indiceMora | percent: '1.0-1' }} de la cartera</p>
       </div>
-      <div class="stat-card stat-blue">
-        <p class="stat-label">Pagos Pendientes</p>
-        <p class="stat-value">{{ pagosPendientes }}</p>
-      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Estado de los préstamos</h2>
+      @if (prestamos.length === 0) {
+        <div class="empty-state">Aún no hay préstamos registrados</div>
+      } @else {
+        <div class="barra-estados" role="img" aria-label="Distribución de préstamos por estado">
+          @for (s of segmentos; track s.clave) {
+            @if (s.cantidad > 0) {
+              <div [ngClass]="'seg-' + s.clave.toLowerCase()" [style.width.%]="s.porcentaje"
+                   [title]="s.etiqueta + ': ' + s.cantidad"></div>
+            }
+          }
+        </div>
+        <div class="leyenda">
+          @for (s of segmentos; track s.clave) {
+            <div class="leyenda-item">
+              <span class="punto" [ngClass]="'seg-' + s.clave.toLowerCase()"></span>
+              <span>{{ s.etiqueta }}</span>
+              <b>{{ s.cantidad }}</b>
+              <small>{{ s.porcentaje }}%</small>
+            </div>
+          }
+        </div>
+      }
     </div>
 
     <div class="sections-grid">
       <div class="card">
-        <h2 class="section-title section-green">Al Día</h2>
-        @if (clientesAlDia.length === 0) {
-          <div class="empty-state">Sin registros</div>
+        <h2 class="section-title">Clientes en mora</h2>
+        @if (enMora.length === 0) {
+          <div class="empty-state">Sin préstamos atrasados 🎉</div>
         } @else {
           <div class="client-list">
-            @for (prestamo of clientesAlDia; track prestamo.id) {
+            @for (p of enMora.slice(0, 6); track p.id) {
               <div class="client-row">
-                <span class="client-name">{{ prestamo.clienteNombre }}</span>
+                <div>
+                  <span class="client-name">{{ p.clienteNombre }}</span>
+                  <small>{{ p.cobradorNombre || 'Sin cobrador' }} · {{ p.cuotasPagadas }}/{{ p.numeroCuotas }} cuotas</small>
+                </div>
+                <b class="monto-rojo">{{ p.saldoPendiente | currency }}</b>
               </div>
             }
           </div>
+          @if (enMora.length > 6) {
+            <a routerLink="/prestamos" class="ver-mas">Ver los {{ enMora.length }} préstamos atrasados →</a>
+          }
         }
       </div>
 
       <div class="card">
-        <h2 class="section-title section-yellow">Pendientes</h2>
-        @if (clientesPendientes.length === 0) {
-          <div class="empty-state">Sin registros</div>
+        <h2 class="section-title">Abonos de hoy</h2>
+        @if (abonosHoy.length === 0) {
+          <div class="empty-state">Todavía no hay abonos hoy</div>
         } @else {
           <div class="client-list">
-            @for (prestamo of clientesPendientes; track prestamo.id) {
+            @for (a of abonosHoy.slice(0, 6); track a.id) {
               <div class="client-row">
-                <span class="client-name">{{ prestamo.clienteNombre }}</span>
+                <div>
+                  <span class="client-name">{{ a.clienteNombre }}</span>
+                  <small>{{ a.cobradorNombre || 'Sin cobrador' }} · {{ a.fechaRegistro | date: 'HH:mm' }}</small>
+                </div>
+                <b class="monto-verde">+{{ a.monto | currency }}</b>
               </div>
             }
           </div>
-        }
-      </div>
-
-      <div class="card">
-        <h2 class="section-title section-red">Atrasados</h2>
-        @if (clientesAtrasados.length === 0) {
-          <div class="empty-state">Sin registros</div>
-        } @else {
-          <div class="client-list">
-            @for (prestamo of clientesAtrasados; track prestamo.id) {
-              <div class="client-row">
-                <span class="client-name">{{ prestamo.clienteNombre }}</span>
-              </div>
-            }
-          </div>
+          <a routerLink="/caja" class="ver-mas">Ir al cuadre de caja →</a>
         }
       </div>
     </div>
