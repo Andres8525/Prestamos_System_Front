@@ -2,7 +2,11 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { TiempoRealService } from '../services/tiempo-real.service';
-import { EstadoConexion } from '../models/tiempo-real.model';
+import { NotificacionService } from '../services/notificacion.service';
+import { EstadoConexion, EventoTiempoReal } from '../models/tiempo-real.model';
+
+/** Los eventos más antiguos que esto vienen del historial al conectar: no se notifican. */
+const ANTIGUEDAD_MAXIMA_AVISO_MS = 15000;
 
 /** Marco de la zona privada: menú lateral, barra superior con el usuario y contenido. */
 @Component({
@@ -20,12 +24,27 @@ export class ShellComponent implements OnInit, OnDestroy {
   conectados = 0;
   private subs = new Subscription();
 
-  constructor(public auth: AuthService, private tiempoReal: TiempoRealService) {}
+  constructor(public auth: AuthService, private tiempoReal: TiempoRealService,
+              private notificaciones: NotificacionService) {}
 
   ngOnInit(): void {
     this.subs.add(this.tiempoReal.estado$.subscribe((e) => (this.estadoTiempoReal = e)));
     this.subs.add(this.tiempoReal.conexiones$.subscribe((n) => (this.conectados = n)));
+    this.subs.add(this.tiempoReal
+      .de('ABONO_REGISTRADO', 'PRESTAMO_CREADO', 'CAJA_CERRADA', 'MODELO_ENTRENADO', 'TAREA_ACTUALIZADA')
+      .subscribe((e) => this.avisar(e)));
     this.tiempoReal.conectar();
+  }
+
+  private avisar(e: EventoTiempoReal): void {
+    if (Date.now() - new Date(e.fecha).getTime() > ANTIGUEDAD_MAXIMA_AVISO_MS) return;
+    if (e.tipo === 'TAREA_ACTUALIZADA') {
+      const estado = e.datos['estado'];
+      if (estado === 'COMPLETADA') this.notificaciones.exito(e.mensaje);
+      else if (estado === 'FALLIDA') this.notificaciones.error(e.mensaje);
+      return;
+    }
+    this.notificaciones.info(e.mensaje);
   }
 
   ngOnDestroy(): void {
