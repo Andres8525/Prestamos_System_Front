@@ -23,18 +23,6 @@
 .topbar-saludo small { font-size: 12px; color: var(--texto-suave); text-transform: capitalize; }
 .topbar-acciones { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 
-.topbar-carrito {
-  position: relative; width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
-  color: var(--texto-medio); background: var(--superficie); border: 1px solid var(--borde); text-decoration: none;
-  transition: transform var(--medio) var(--curva), border-color var(--rapido), color var(--rapido);
-}
-.topbar-carrito:hover { transform: translateY(-2px); border-color: var(--primario-borde); color: var(--primario); }
-.topbar-carrito .burbuja {
-  position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
-  background: var(--peligro); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center;
-  box-shadow: 0 0 0 2px var(--superficie);
-}
-
 /* ── Menú de usuario ────────────────────────────────────── */
 .usuario { position: relative; }
 .usuario-boton {

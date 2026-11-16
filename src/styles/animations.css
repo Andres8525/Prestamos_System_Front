@@ -33,16 +33,15 @@
 .list-container, .dashboard { animation: aparecer-arriba 0.45s var(--curva) both; }
 
 /* Entrada escalonada de tarjetas, KPIs y filas */
-.kpis > *, .stats-grid > *, .sections-grid > *, .productos-grid > * {
+.kpis > *, .stats-grid > *, .sections-grid > * {
   animation: aparecer-arriba 0.5s var(--curva) both;
 }
-.kpis > :nth-child(1), .stats-grid > :nth-child(1), .productos-grid > :nth-child(1) { animation-delay: 0.04s; }
-.kpis > :nth-child(2), .stats-grid > :nth-child(2), .productos-grid > :nth-child(2) { animation-delay: 0.08s; }
-.kpis > :nth-child(3), .stats-grid > :nth-child(3), .productos-grid > :nth-child(3) { animation-delay: 0.12s; }
-.kpis > :nth-child(4), .stats-grid > :nth-child(4), .productos-grid > :nth-child(4) { animation-delay: 0.16s; }
-.kpis > :nth-child(5), .stats-grid > :nth-child(5), .productos-grid > :nth-child(5) { animation-delay: 0.20s; }
-.kpis > :nth-child(6), .stats-grid > :nth-child(6), .productos-grid > :nth-child(6) { animation-delay: 0.24s; }
-.productos-grid > :nth-child(n + 7) { animation-delay: 0.28s; }
+.kpis > :nth-child(1), .stats-grid > :nth-child(1) { animation-delay: 0.04s; }
+.kpis > :nth-child(2), .stats-grid > :nth-child(2) { animation-delay: 0.08s; }
+.kpis > :nth-child(3), .stats-grid > :nth-child(3) { animation-delay: 0.12s; }
+.kpis > :nth-child(4), .stats-grid > :nth-child(4) { animation-delay: 0.16s; }
+.kpis > :nth-child(5), .stats-grid > :nth-child(5) { animation-delay: 0.20s; }
+.kpis > :nth-child(6), .stats-grid > :nth-child(6) { animation-delay: 0.24s; }
 
 .card { animation: escalar-entrada 0.4s var(--curva) both; }
 .alert { animation: aparecer-arriba 0.3s var(--curva) both; }

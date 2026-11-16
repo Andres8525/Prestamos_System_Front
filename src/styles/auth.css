@@ -1,93 +1,313 @@
-/* ── Pantallas de acceso (login / registro) ─────────────── */
-.auth-page {
-  min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  background: var(--superficie);
+/* ── Pantalla de acceso: cielo nocturno con aurora y tarjeta oscura centrada ── */
+.acceso {
+  --acceso-tarjeta: rgba(28, 29, 33, 0.94);
+  --acceso-borde: rgba(255, 255, 255, 0.08);
+  --acceso-campo: #2b2c31;
+  --acceso-campo-borde: #3a3b41;
+  --acceso-texto: #f4f4f5;
+  --acceso-suave: #b4b6bf;
+  --acceso-cta: #facc15;
+  --acceso-cta-hover: #fde047;
+  --acceso-cta-texto: #111111;
+  --acceso-enlace: #93c5fd;
+
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 16px 48px;
+  color: var(--acceso-texto);
+  background: radial-gradient(ellipse at 50% 120%, #0b3b3a 0%, #071a2c 45%, #030712 100%);
 }
 
-/* Panel de marca con fondo animado */
-.auth-marca {
-  position: relative; overflow: hidden; color: #fff; padding: 56px 64px;
-  display: flex; flex-direction: column; justify-content: space-between;
-  background: linear-gradient(140deg, #1e1b4b 0%, #312e81 45%, #4f46e5 100%);
+/* Estrellas: tres capas de puntos que titilan a distinto ritmo */
+.acceso-estrellas, .acceso-estrellas::before, .acceso-estrellas::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: repeat;
 }
-.auth-marca::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
-  background-size: 22px 22px;
+.acceso-estrellas {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+    radial-gradient(1px 1px at 90px 140px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 160px 60px, #fff, transparent),
+    radial-gradient(1px 1px at 230px 190px, rgba(255, 255, 255, 0.7), transparent);
+  background-size: 260px 240px;
+  opacity: 0.7;
 }
-.auth-burbuja { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.55; animation: flotar 14s ease-in-out infinite; }
-.auth-burbuja.b1 { width: 340px; height: 340px; background: #10b981; top: -90px; right: -70px; }
-.auth-burbuja.b2 { width: 300px; height: 300px; background: #818cf8; bottom: -80px; left: -60px; animation-delay: -5s; animation-duration: 18s; }
-.auth-burbuja.b3 { width: 200px; height: 200px; background: #38bdf8; top: 45%; left: 55%; animation-delay: -9s; animation-duration: 22s; opacity: 0.35; }
+.acceso-estrellas::before {
+  content: '';
+  background-image:
+    radial-gradient(1px 1px at 40px 80px, #fff, transparent),
+    radial-gradient(1px 1px at 180px 20px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(2px 2px at 300px 150px, #fff, transparent);
+  background-size: 340px 300px;
+  animation: titilar 4s ease-in-out infinite;
+}
+.acceso-estrellas::after {
+  content: '';
+  background-image:
+    radial-gradient(1px 1px at 70px 200px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 260px 90px, rgba(255, 255, 255, 0.85), transparent);
+  background-size: 420px 380px;
+  animation: titilar 6s ease-in-out infinite 2s;
+}
+@keyframes titilar { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
 
-.auth-marca > :not(.auth-burbuja) { position: relative; z-index: 1; }
-.auth-logo { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
-.auth-logo img { width: 40px; height: 40px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); }
-.auth-lema h2 { font-size: clamp(28px, 3.2vw, 42px); line-height: 1.12; font-weight: 800; letter-spacing: -0.03em; animation: aparecer-arriba 0.7s var(--curva) both 0.1s; }
-.auth-lema h2 span { background: linear-gradient(90deg, #6ee7b7, #a5b4fc); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.auth-lema p { margin-top: 16px; max-width: 440px; color: #c7d2fe; font-size: 15px; animation: aparecer-arriba 0.7s var(--curva) both 0.2s; }
-.auth-puntos { list-style: none; display: grid; gap: 12px; margin-top: 28px; }
-.auth-puntos li {
-  display: flex; align-items: center; gap: 12px; font-size: 14px; color: #e0e7ff;
-  padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(6px);
+/* Aurora: bandas verdes/turquesa difuminadas que ondulan lentamente */
+.acceso-aurora {
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 85%;
+  pointer-events: none;
+  filter: blur(42px);
+  opacity: 0.85;
+  mix-blend-mode: screen;
+}
+.acceso-aurora span {
+  position: absolute;
+  border-radius: 50%;
+  transform-origin: center;
+}
+.acceso-aurora .banda-1 {
+  width: 70%; height: 38%; left: 8%; top: 30%;
+  background: radial-gradient(ellipse at center, rgba(52, 211, 153, 0.75), rgba(16, 185, 129, 0.15) 60%, transparent 72%);
+  transform: rotate(-14deg);
+  animation: aurora-1 16s ease-in-out infinite;
+}
+.acceso-aurora .banda-2 {
+  width: 60%; height: 30%; right: 2%; top: 22%;
+  background: radial-gradient(ellipse at center, rgba(45, 212, 191, 0.6), rgba(56, 189, 248, 0.15) 60%, transparent 72%);
+  transform: rotate(10deg);
+  animation: aurora-2 20s ease-in-out infinite;
+}
+.acceso-aurora .banda-3 {
+  width: 45%; height: 26%; left: 30%; top: 48%;
+  background: radial-gradient(ellipse at center, rgba(167, 139, 250, 0.35), transparent 70%);
+  animation: aurora-1 24s ease-in-out infinite reverse;
+}
+@keyframes aurora-1 {
+  0%, 100% { transform: translate(0, 0) rotate(-14deg) scaleX(1); }
+  50%      { transform: translate(6%, 4%) rotate(-6deg) scaleX(1.15); }
+}
+@keyframes aurora-2 {
+  0%, 100% { transform: translate(0, 0) rotate(10deg) scaleY(1); }
+  50%      { transform: translate(-8%, 6%) rotate(18deg) scaleY(1.25); }
+}
+
+/* Montañas nevadas en el horizonte */
+.acceso-montanas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 26vh;
+  min-height: 140px;
+  pointer-events: none;
+}
+
+/* Marca */
+.acceso-marca {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+  text-decoration: none;
+  color: #fff;
   animation: aparecer-arriba 0.6s var(--curva) both;
 }
-.auth-puntos li:nth-child(1) { animation-delay: 0.30s; }
-.auth-puntos li:nth-child(2) { animation-delay: 0.38s; }
-.auth-puntos li:nth-child(3) { animation-delay: 0.46s; }
-.auth-puntos li:nth-child(4) { animation-delay: 0.54s; }
-.auth-puntos .icono { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: rgba(16, 185, 129, 0.25); font-size: 15px; flex-shrink: 0; }
-.auth-pie { font-size: 12px; color: #a5b4fc; }
+.acceso-marca img { width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45); }
+.acceso-marca span { display: flex; flex-direction: column; line-height: 1; font-weight: 800; letter-spacing: 0.06em; font-size: 15px; }
+.acceso-marca small { font-size: 10.5px; font-weight: 600; letter-spacing: 0.22em; color: var(--acceso-suave); margin-top: 5px; }
 
-/* Panel del formulario */
-.auth-form-panel { display: grid; place-items: center; padding: 40px 24px; background: var(--fondo); }
-.auth-card {
-  width: 100%; max-width: 420px; background: var(--superficie); border: 1px solid var(--borde);
-  border-radius: 22px; padding: 36px 34px; box-shadow: var(--sombra-lg);
+/* Tarjeta */
+.acceso-tarjeta {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  padding: 30px 32px 28px;
+  border-radius: 18px;
+  background: var(--acceso-tarjeta);
+  border: 1px solid var(--acceso-borde);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(14px);
   animation: escalar-entrada 0.55s var(--curva) both 0.1s;
 }
-.auth-card h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
-.auth-card .auth-sub { color: var(--texto-suave); margin: 6px 0 24px; font-size: 14px; }
-.auth-card form { display: grid; gap: 16px; }
-
-.campo { position: relative; display: grid; gap: 6px; }
-.campo label { font-size: 12px; font-weight: 600; color: var(--texto-medio); }
-.campo input {
-  width: 100%; padding: 12px 14px; border: 1px solid var(--borde-fuerte); border-radius: 12px;
-  font-family: inherit; font-size: 14px; color: var(--texto); background: var(--superficie);
-  transition: border-color var(--rapido), box-shadow var(--rapido), transform var(--rapido);
+.acceso-sello {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--acceso-suave);
+  margin-bottom: 14px;
 }
-.campo input:focus { outline: none; border-color: var(--primario); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.14); }
-.campo input.invalido { border-color: var(--peligro); }
-.campo .ayuda { font-size: 12px; color: var(--texto-suave); }
-.campo .ayuda.error { color: var(--peligro-texto); }
-.campo-clave input { padding-right: 76px; }
+.acceso-sello b { font-size: 16px; font-weight: 800; font-style: italic; color: #fff; letter-spacing: -0.01em; }
+
+.acceso-paso { animation: paso-entra 0.35s var(--curva) both; }
+@keyframes paso-entra { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+
+.acceso h1 { font-size: 25px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; color: #fff; }
+.acceso-intro { margin: 10px 0 22px; font-size: 14px; line-height: 1.55; color: var(--acceso-suave); }
+
+.acceso-email {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 14px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--acceso-borde);
+  font-size: 14px;
+}
+.acceso-email span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.acceso form { display: grid; gap: 14px; }
+
+/* Campos con etiqueta flotante */
+.campo-flotante { position: relative; }
+.campo-flotante input {
+  width: 100%;
+  height: 54px;
+  padding: 22px 16px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--acceso-campo-borde);
+  background: var(--acceso-campo);
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  transition: border-color var(--rapido), box-shadow var(--rapido), background-color var(--rapido);
+}
+.campo-flotante input:focus {
+  outline: none;
+  border-color: var(--acceso-cta);
+  box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.22);
+  background: #303137;
+}
+.campo-flotante input.invalido { border-color: #f87171; }
+.campo-flotante label {
+  position: absolute;
+  left: 16px;
+  top: 17px;
+  font-size: 14px;
+  color: var(--acceso-suave);
+  pointer-events: none;
+  transition: top var(--rapido), font-size var(--rapido), color var(--rapido);
+}
+.campo-flotante input:focus + label,
+.campo-flotante input:not(:placeholder-shown) + label { top: 8px; font-size: 11px; color: #d4d4d8; }
+.campo-flotante.con-boton input { padding-right: 84px; }
+.campo-ayuda { font-size: 12px; color: #fca5a5; margin-top: 6px; }
+
 .ver-clave {
-  position: absolute; right: 8px; bottom: 7px; border: none; background: none; cursor: pointer;
-  font-family: inherit; font-size: 12px; font-weight: 600; color: var(--primario); padding: 6px 8px; border-radius: 8px;
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--acceso-enlace);
 }
-.ver-clave:hover { background: var(--primario-suave); }
+.ver-clave:hover { background: rgba(147, 197, 253, 0.12); }
 
-/* Medidor de fortaleza de contraseña */
+/* Medidor de fortaleza */
 .fortaleza { display: grid; gap: 6px; }
-.fortaleza-barra { height: 6px; border-radius: 999px; background: var(--borde); overflow: hidden; }
+.fortaleza-barra { height: 5px; border-radius: 999px; background: #3a3b41; overflow: hidden; }
 .fortaleza-barra > div { height: 100%; border-radius: 999px; transition: width 0.4s var(--curva), background-color 0.3s; }
-.fortaleza-1 > div { background: var(--peligro); }
-.fortaleza-2 > div { background: var(--alerta); }
-.fortaleza-3 > div { background: var(--info); }
-.fortaleza-4 > div { background: var(--exito); }
-.fortaleza small { font-size: 12px; color: var(--texto-suave); }
+.fortaleza-1 > div { background: #f87171; }
+.fortaleza-2 > div { background: #fbbf24; }
+.fortaleza-3 > div { background: #38bdf8; }
+.fortaleza-4 > div { background: #34d399; }
+.fortaleza small { font-size: 12px; color: var(--acceso-suave); }
 
-.auth-enlace { text-align: center; font-size: 13px; color: var(--texto-suave); margin-top: 18px; }
-.auth-enlace a { color: var(--primario); font-weight: 600; text-decoration: none; }
-.auth-enlace a:hover { text-decoration: underline; }
-.auth-demo { margin-top: 16px; padding: 10px 12px; border-radius: 12px; background: var(--primario-suave); color: var(--primario-oscuro); font-size: 12px; text-align: center; }
+/* Botón principal */
+.btn-acceso {
+  height: 50px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  background: var(--acceso-cta);
+  color: var(--acceso-cta-texto);
+  transition: background-color var(--rapido), transform var(--rapido), box-shadow var(--medio) var(--curva);
+}
+.btn-acceso:hover:not(:disabled) { background: var(--acceso-cta-hover); transform: translateY(-1px); box-shadow: 0 10px 26px -8px rgba(250, 204, 21, 0.6); }
+.btn-acceso:active:not(:disabled) { transform: scale(0.99); }
+.btn-acceso:disabled { opacity: 0.65; cursor: wait; }
+.btn-acceso .spinner { border-color: rgba(0, 0, 0, 0.25); border-top-color: #111; }
 
-@media (max-width: 900px) {
-  .auth-page { grid-template-columns: 1fr; }
-  .auth-marca { padding: 28px 24px; }
-  .auth-lema p, .auth-puntos, .auth-pie { display: none; }
-  .auth-lema h2 { font-size: 24px; margin-top: 18px; }
-  .auth-form-panel { padding: 28px 16px 40px; align-items: start; }
+.enlace {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--acceso-enlace);
+  text-decoration: none;
+}
+.enlace:hover { text-decoration: underline; }
+
+.acceso-ayuda { margin-top: 18px; font-size: 13px; color: var(--acceso-suave); }
+.acceso-separador { height: 1px; background: var(--acceso-borde); margin: 22px 0 18px; }
+
+.acceso-mensaje {
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  margin-bottom: 14px;
+  animation: aparecer-arriba 0.3s var(--curva) both;
+}
+.acceso-mensaje.error { background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.35); color: #fecaca; }
+.acceso-mensaje.info { background: rgba(147, 197, 253, 0.1); border: 1px solid rgba(147, 197, 253, 0.3); color: #dbeafe; }
+.acceso-mensaje.aviso { display: flex; align-items: center; gap: 10px; background: rgba(250, 204, 21, 0.1); border: 1px solid rgba(250, 204, 21, 0.3); color: #fef08a; }
+
+/* Pie de la tarjeta: módulos de la plataforma (como la fila de marcas del ejemplo) */
+.acceso-pie h2 { font-size: 13.5px; font-weight: 700; color: #fff; line-height: 1.4; }
+.acceso-pie p { font-size: 12.5px; line-height: 1.5; color: var(--acceso-suave); margin-top: 6px; }
+.acceso-modulos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 14px; }
+.acceso-modulos span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d4d4d8;
+  opacity: 0.8;
+  transition: opacity var(--rapido), color var(--rapido);
+}
+.acceso-modulos span:hover { opacity: 1; color: #fff; }
+.acceso-modulos svg { width: 15px; height: 15px; }
+
+.acceso-demo { margin-top: 14px; font-size: 12px; color: var(--acceso-suave); text-align: center; }
+.acceso-demo b { color: #fff; }
+
+@media (max-width: 520px) {
+  .acceso { padding-top: 20px; }
+  .acceso-tarjeta { padding: 24px 20px; border-radius: 16px; }
+  .acceso h1 { font-size: 22px; }
 }
