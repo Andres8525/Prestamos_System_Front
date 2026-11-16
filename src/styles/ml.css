@@ -1,0 +1,92 @@
+/* ── Machine Learning ───────────────────────────────────── */
+.ml-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+.ml-grid > .card { margin-bottom: 0; }
+.ml-seccion { margin-bottom: 20px; }
+.ml-nota { font-size: 12px; color: var(--texto-suave); margin: -12px 0 16px; }
+.ml-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; background: var(--primario-suave); color: var(--primario-oscuro);
+}
+.ml-chip.ganador { background: var(--exito-suave); color: var(--exito-texto); }
+
+/* Barras horizontales (importancia de variables) */
+.barras { display: grid; gap: 10px; }
+.barra-fila { display: grid; grid-template-columns: minmax(150px, 1.2fr) 2fr 56px; align-items: center; gap: 12px; font-size: 13px; }
+.barra-fila b { text-align: right; font-variant-numeric: tabular-nums; }
+.barra { height: 10px; border-radius: 999px; background: var(--borde); overflow: hidden; }
+.barra > div {
+  height: 100%; border-radius: 999px; background: var(--gradiente-marca);
+  transform-origin: left; animation: crecer-barra 0.9s var(--curva) both;
+}
+.barra-fila:nth-child(2) .barra > div { animation-delay: 0.05s; }
+.barra-fila:nth-child(3) .barra > div { animation-delay: 0.10s; }
+.barra-fila:nth-child(4) .barra > div { animation-delay: 0.15s; }
+.barra-fila:nth-child(5) .barra > div { animation-delay: 0.20s; }
+.barra-fila:nth-child(n + 6) .barra > div { animation-delay: 0.25s; }
+@keyframes crecer-barra { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Matriz de confusión */
+.matriz { display: grid; grid-template-columns: auto 1fr 1fr; gap: 6px; font-size: 12px; }
+.matriz .eje { display: grid; place-items: center; color: var(--texto-suave); font-weight: 600; text-align: center; padding: 4px; }
+.matriz .celda {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: 84px; border-radius: 12px; font-size: 11px; text-align: center; padding: 8px;
+  animation: escalar-entrada 0.4s var(--curva) both;
+}
+.matriz .celda strong { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.matriz .acierto { background: var(--exito-suave); color: var(--exito-texto); }
+.matriz .fallo { background: var(--peligro-suave); color: var(--peligro-texto); }
+
+.metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-top: 16px; }
+.metrica { padding: 10px 12px; border-radius: 10px; background: var(--superficie-2); border: 1px solid var(--borde); }
+.metrica span { display: block; font-size: 11px; color: var(--texto-suave); }
+.metrica strong { font-size: 17px; font-variant-numeric: tabular-nums; }
+
+/* Curva ROC */
+.roc { width: 100%; max-width: 380px; display: block; margin: 0 auto; overflow: visible; }
+.roc .rejilla { stroke: var(--borde); stroke-width: 0.4; }
+.roc .azar { stroke: var(--texto-tenue); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.roc .area { fill: url(#roc-relleno); }
+.roc .curva {
+  fill: none; stroke: var(--primario); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round;
+  stroke-dasharray: 400; stroke-dashoffset: 400; animation: trazo 1.4s var(--curva) forwards;
+}
+.roc .punto { fill: var(--superficie); stroke: var(--primario); stroke-width: 0.8; }
+.roc text { font-size: 4px; fill: var(--texto-suave); font-family: var(--fuente); }
+.roc .auc-texto { font-size: 6px; font-weight: 800; fill: var(--primario-oscuro); }
+
+/* Medidor de probabilidad (anillo) */
+.medidor {
+  --p: 0; --color: var(--exito);
+  width: 150px; height: 150px; border-radius: 50%; margin: 4px auto 12px; display: grid; place-items: center;
+  background: conic-gradient(var(--color) calc(var(--p) * 1%), var(--borde) 0);
+  transition: --p 0.6s var(--curva);
+}
+.medidor::before { content: ''; grid-area: 1 / 1; width: 118px; height: 118px; border-radius: 50%; background: var(--superficie); }
+.medidor div { grid-area: 1 / 1; z-index: 1; text-align: center; line-height: 1.1; }
+.medidor strong { display: block; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.medidor small { font-size: 11px; color: var(--texto-suave); }
+.medidor.medio { --color: var(--alerta); }
+.medidor.alto { --color: var(--peligro); }
+@property --p { syntax: '<number>'; inherits: false; initial-value: 0; }
+
+/* Simulador */
+.simulador { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(220px, 1fr); gap: 24px; align-items: start; }
+.deslizador { display: grid; gap: 4px; margin-bottom: 12px; }
+.deslizador label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--texto-medio); }
+.deslizador label b { color: var(--primario); font-variant-numeric: tabular-nums; }
+.deslizador input[type='range'] { width: 100%; accent-color: var(--primario); cursor: pointer; }
+.perfiles { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+
+/* Línea de tiempo del riesgo de un cliente */
+.evolucion { display: flex; align-items: flex-end; gap: 4px; height: 70px; padding: 6px 0; }
+.evolucion div { flex: 1; min-width: 6px; border-radius: 4px 4px 0 0; animation: crecer-vertical 0.6s var(--curva) both; transform-origin: bottom; }
+.evolucion .bajo { background: var(--exito); }
+.evolucion .medio { background: var(--alerta); }
+.evolucion .alto { background: var(--peligro); }
+@keyframes crecer-vertical { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+
+@media (max-width: 760px) {
+  .simulador { grid-template-columns: 1fr; }
+  .barra-fila { grid-template-columns: 1fr 1.4fr 48px; }
+}
