@@ -4,7 +4,7 @@ export interface MenuItem {
   label: string;
   route: string;
   icon: string;
-  /** La opción solo se marca activa con la ruta exacta (evita que /tienda quede activa en /tienda/pedidos). */
+  /** La opción solo se marca activa con la ruta exacta (evita que una ruta padre quede activa en sus subrutas). */
   exacta?: boolean;
 }
 
