@@ -1,0 +1,94 @@
+<div class="list-container">
+  <div class="page-header">
+    <h1>Scoring de Riesgo (IA)</h1>
+    <button class="btn btn-primary" (click)="reentrenar()" [disabled]="entrenando">
+      {{ entrenando ? 'Entrenando…' : 'Reentrenar modelo' }}
+    </button>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (modelo) {
+    <div class="kpis">
+      <div class="kpi"><span>Algoritmo</span><strong style="font-size:14px">{{ modelo.algoritmo }}</strong></div>
+      <div class="kpi"><span>Préstamos reales</span><strong>{{ modelo.muestrasReales }}</strong></div>
+      <div class="kpi"><span>Muestras de referencia</span><strong>{{ modelo.muestrasSinteticas }}</strong></div>
+      <div class="kpi"><span>Exactitud</span><strong>{{ modelo.exactitud | percent: '1.0-1' }}</strong></div>
+      <div class="kpi"><span>AUC-ROC</span><strong>{{ modelo.auc | number: '1.3-3' }}</strong></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi positivo"><span>Riesgo bajo</span><strong>{{ contar('BAJO') }}</strong></div>
+      <div class="kpi"><span>Riesgo medio</span><strong>{{ contar('MEDIO') }}</strong></div>
+      <div class="kpi negativo"><span>Riesgo alto</span><strong>{{ contar('ALTO') }}</strong></div>
+    </div>
+  }
+
+  @if (seleccionado) {
+    <div class="card scoring-box" [ngClass]="'riesgo-' + seleccionado.nivelRiesgo.toLowerCase()">
+      <div class="scoring-head">
+        <span class="ia-tag">IA · Scoring</span>
+        <strong>{{ seleccionado.clienteNombre }}</strong>
+        <span>Prob. de incumplimiento: <b>{{ seleccionado.probabilidadDefault | percent: '1.0-1' }}</b></span>
+        <span class="badge">{{ seleccionado.recomendacion }}</span>
+        <button class="btn btn-secondary btn-sm" (click)="seleccionado = null">Cerrar</button>
+      </div>
+      <p>{{ seleccionado.mensaje }}</p>
+      <ul class="factores">
+        @for (f of seleccionado.factores; track f.variable) {
+          <li>{{ f.descripcion }}: <b>{{ f.valor }}</b>
+            <span [class.sube]="f.impacto > 0" [class.baja]="f.impacto <= 0">
+              {{ f.impacto > 0 ? '▲ aumenta' : '▼ reduce' }} el riesgo ({{ f.impacto | number: '1.2-2' }})
+            </span>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (cargando) {
+    <div class="loading-text">Evaluando cartera…</div>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th><th>Prob. incumplimiento</th><th>Puntaje</th><th>Nivel</th><th>Recomendación</th>
+            <th>Prom. atraso</th><th>Cuotas atrasadas</th><th>Abonos incompletos</th><th>Préstamos</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of resultados; track r.clienteId) {
+            <tr>
+              <td>{{ r.clienteNombre }}</td>
+              <td><strong>{{ r.probabilidadDefault | percent: '1.0-1' }}</strong></td>
+              <td>{{ r.puntaje }}</td>
+              <td><span class="badge" [ngClass]="'riesgo-' + r.nivelRiesgo.toLowerCase()">{{ r.nivelRiesgo }}</span></td>
+              <td>{{ r.sinHistorial ? 'SIN HISTORIAL' : r.recomendacion }}</td>
+              <td>{{ r.caracteristicas['promedioDiasAtraso'] | number: '1.1-1' }} días</td>
+              <td>{{ r.caracteristicas['tasaCuotasAtrasadas'] | percent: '1.0-0' }}</td>
+              <td>{{ r.caracteristicas['tasaAbonosIncompletos'] | percent: '1.0-0' }}</td>
+              <td>{{ r.prestamosAnteriores }}</td>
+              <td><button class="btn btn-primary btn-sm" (click)="seleccionado = r">Detalle</button></td>
+            </tr>
+          } @empty {
+            <tr><td colspan="10" class="empty-state">No hay clientes para evaluar</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (pesos.length) {
+    <div class="card">
+      <h2 class="form-title">Pesos del modelo (variables estandarizadas)</h2>
+      <p><small>Un peso positivo aumenta la probabilidad de incumplimiento; uno negativo la reduce.</small></p>
+      <ul class="factores">
+        @for (p of pesos; track p[0]) {
+          <li>{{ p[0] }}: <b [class.sube]="p[1] > 0" [class.baja]="p[1] <= 0">{{ p[1] | number: '1.3-3' }}</b></li>
+        }
+      </ul>
+    </div>
+  }
+</div>
