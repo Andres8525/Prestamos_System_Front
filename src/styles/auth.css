@@ -1,0 +1,93 @@
+/* ── Pantallas de acceso (login / registro) ─────────────── */
+.auth-page {
+  min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  background: var(--superficie);
+}
+
+/* Panel de marca con fondo animado */
+.auth-marca {
+  position: relative; overflow: hidden; color: #fff; padding: 56px 64px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: linear-gradient(140deg, #1e1b4b 0%, #312e81 45%, #4f46e5 100%);
+}
+.auth-marca::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.auth-burbuja { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.55; animation: flotar 14s ease-in-out infinite; }
+.auth-burbuja.b1 { width: 340px; height: 340px; background: #10b981; top: -90px; right: -70px; }
+.auth-burbuja.b2 { width: 300px; height: 300px; background: #818cf8; bottom: -80px; left: -60px; animation-delay: -5s; animation-duration: 18s; }
+.auth-burbuja.b3 { width: 200px; height: 200px; background: #38bdf8; top: 45%; left: 55%; animation-delay: -9s; animation-duration: 22s; opacity: 0.35; }
+
+.auth-marca > * { position: relative; z-index: 1; }
+.auth-logo { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.auth-logo img { width: 40px; height: 40px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); }
+.auth-lema h2 { font-size: clamp(28px, 3.2vw, 42px); line-height: 1.12; font-weight: 800; letter-spacing: -0.03em; animation: aparecer-arriba 0.7s var(--curva) both 0.1s; }
+.auth-lema h2 span { background: linear-gradient(90deg, #6ee7b7, #a5b4fc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.auth-lema p { margin-top: 16px; max-width: 440px; color: #c7d2fe; font-size: 15px; animation: aparecer-arriba 0.7s var(--curva) both 0.2s; }
+.auth-puntos { list-style: none; display: grid; gap: 12px; margin-top: 28px; }
+.auth-puntos li {
+  display: flex; align-items: center; gap: 12px; font-size: 14px; color: #e0e7ff;
+  padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(6px);
+  animation: aparecer-arriba 0.6s var(--curva) both;
+}
+.auth-puntos li:nth-child(1) { animation-delay: 0.30s; }
+.auth-puntos li:nth-child(2) { animation-delay: 0.38s; }
+.auth-puntos li:nth-child(3) { animation-delay: 0.46s; }
+.auth-puntos li:nth-child(4) { animation-delay: 0.54s; }
+.auth-puntos .icono { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: rgba(16, 185, 129, 0.25); font-size: 15px; flex-shrink: 0; }
+.auth-pie { font-size: 12px; color: #a5b4fc; }
+
+/* Panel del formulario */
+.auth-form-panel { display: grid; place-items: center; padding: 40px 24px; background: var(--fondo); }
+.auth-card {
+  width: 100%; max-width: 420px; background: var(--superficie); border: 1px solid var(--borde);
+  border-radius: 22px; padding: 36px 34px; box-shadow: var(--sombra-lg);
+  animation: escalar-entrada 0.55s var(--curva) both 0.1s;
+}
+.auth-card h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.auth-card .auth-sub { color: var(--texto-suave); margin: 6px 0 24px; font-size: 14px; }
+.auth-card form { display: grid; gap: 16px; }
+
+.campo { position: relative; display: grid; gap: 6px; }
+.campo label { font-size: 12px; font-weight: 600; color: var(--texto-medio); }
+.campo input {
+  width: 100%; padding: 12px 14px; border: 1px solid var(--borde-fuerte); border-radius: 12px;
+  font-family: inherit; font-size: 14px; color: var(--texto); background: var(--superficie);
+  transition: border-color var(--rapido), box-shadow var(--rapido), transform var(--rapido);
+}
+.campo input:focus { outline: none; border-color: var(--primario); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.14); }
+.campo input.invalido { border-color: var(--peligro); }
+.campo .ayuda { font-size: 12px; color: var(--texto-suave); }
+.campo .ayuda.error { color: var(--peligro-texto); }
+.campo-clave input { padding-right: 76px; }
+.ver-clave {
+  position: absolute; right: 8px; bottom: 7px; border: none; background: none; cursor: pointer;
+  font-family: inherit; font-size: 12px; font-weight: 600; color: var(--primario); padding: 6px 8px; border-radius: 8px;
+}
+.ver-clave:hover { background: var(--primario-suave); }
+
+/* Medidor de fortaleza de contraseña */
+.fortaleza { display: grid; gap: 6px; }
+.fortaleza-barra { height: 6px; border-radius: 999px; background: var(--borde); overflow: hidden; }
+.fortaleza-barra > div { height: 100%; border-radius: 999px; transition: width 0.4s var(--curva), background-color 0.3s; }
+.fortaleza-1 > div { background: var(--peligro); }
+.fortaleza-2 > div { background: var(--alerta); }
+.fortaleza-3 > div { background: var(--info); }
+.fortaleza-4 > div { background: var(--exito); }
+.fortaleza small { font-size: 12px; color: var(--texto-suave); }
+
+.auth-enlace { text-align: center; font-size: 13px; color: var(--texto-suave); margin-top: 18px; }
+.auth-enlace a { color: var(--primario); font-weight: 600; text-decoration: none; }
+.auth-enlace a:hover { text-decoration: underline; }
+.auth-demo { margin-top: 16px; padding: 10px 12px; border-radius: 12px; background: var(--primario-suave); color: var(--primario-oscuro); font-size: 12px; text-align: center; }
+
+@media (max-width: 900px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-marca { padding: 28px 24px; }
+  .auth-lema p, .auth-puntos, .auth-pie { display: none; }
+  .auth-lema h2 { font-size: 24px; margin-top: 18px; }
+  .auth-form-panel { padding: 28px 16px 40px; align-items: start; }
+}
