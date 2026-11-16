@@ -101,3 +101,12 @@
   transition: transform var(--rapido), background var(--rapido);
 }
 .tema-boton:hover { background: var(--superficie-2); transform: rotate(-15deg); }
+
+/* Impresión: solo el contenido de la página (reportes de ruta, caja o cartera en papel) */
+@media print {
+  .shell-lateral, .topbar, .shell-velo, .header-actions, .btn, .buscador, app-toasts { display: none !important; }
+  .shell-cuerpo, .main-content { margin: 0 !important; padding: 0 !important; }
+  body { background: #fff !important; color: #000; }
+  .card, .kpi, .table-wrapper { box-shadow: none !important; border-color: #ccc !important; break-inside: avoid; }
+  .table-wrapper { max-height: none !important; overflow: visible !important; }
+}
