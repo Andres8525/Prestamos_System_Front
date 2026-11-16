@@ -1,0 +1,91 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <h1>Servicios gRPC</h1>
+      <p class="subtitulo">API binaria de alto rendimiento para la app móvil del cobrador: unario, streaming y bidireccional</p>
+    </div>
+    <button class="btn btn-secondary" (click)="cargar()" [disabled]="cargando">Actualizar métricas</button>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (info; as i) {
+    <div class="kpis">
+      <div class="kpi" [class.positivo]="i.activo">
+        <span>Servidor</span>
+        <strong style="font-size:15px">{{ i.activo ? 'En ejecución' : (i.habilitado ? 'Detenido' : 'Deshabilitado') }}</strong>
+      </div>
+      <div class="kpi"><span>Puerto</span><strong>{{ i.puerto > 0 ? i.puerto : '—' }}</strong></div>
+      <div class="kpi"><span>Servicios / métodos</span><strong>{{ i.servicios.length }} / {{ totalMetodos }}</strong></div>
+      <div class="kpi"><span>Llamadas atendidas</span><strong>{{ totalLlamadas | number }}</strong></div>
+    </div>
+
+    <div class="grpc-patrones card ml-seccion">
+      @for (p of leyenda; track p) {
+        <div class="grpc-patron" [ngClass]="'patron-' + p.toLowerCase()">
+          <b>{{ patrones[p].flujo }}</b>
+          <span>{{ patrones[p].etiqueta }}</span>
+        </div>
+      }
+    </div>
+
+    @for (s of i.servicios; track s.nombre) {
+      <div class="card ml-seccion" [class.grpc-infra]="esInfraestructura(s.nombre)">
+        <h2 class="form-title grpc-servicio">{{ s.nombre }}
+          @if (esInfraestructura(s.nombre)) { <span class="ml-chip">infraestructura · pública</span> }
+          @else { <span class="ml-chip">requiere token</span> }
+        </h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Método</th><th>Patrón</th><th>Llamadas</th><th>Errores</th><th>Tiempo promedio</th><th>Último estado</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (m of s.metodos; track m.nombre) {
+                <tr>
+                  <td><code>{{ m.nombre }}</code></td>
+                  <td><span class="badge" [ngClass]="'patron-' + m.patron.toLowerCase()" [title]="m.descripcionPatron">
+                    {{ patrones[m.patron].flujo }} · {{ patrones[m.patron].etiqueta }}</span></td>
+                  <td>{{ m.llamadas | number }}</td>
+                  <td [class.grpc-error]="tasaError(m) > 0.2">{{ m.errores | number }}</td>
+                  <td>{{ m.llamadas ? (m.promedioMs | number: '1.1-1') + ' ms' : '—' }}</td>
+                  <td>{{ m.ultimoEstado }}</td>
+                  <td>
+                    @if (!esInfraestructura(s.nombre)) {
+                      <button class="btn btn-secondary btn-sm" (click)="copiar(ejemplo(s.nombre, m.nombre))" title="Copiar comando grpcurl">grpcurl</button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  } @else if (cargando) {
+    <div class="loading-text">Consultando el servidor gRPC...</div>
+  }
+
+  @if (archivos.length) {
+    <div class="card ml-seccion">
+      <h2 class="form-title">Contratos (.proto)
+        @if (copiado) { <span class="ml-chip">copiado</span> }
+      </h2>
+      <p class="ml-nota">Definen mensajes y servicios; el backend genera el código Java con <code>protoc</code> y cualquier cliente (Android, Flutter, Go, Python…) puede generar el suyo.</p>
+      <div class="grpc-pestanas" role="tablist">
+        @for (a of archivos; track a) {
+          <button role="tab" [class.activa]="a === archivo" [attr.aria-selected]="a === archivo" (click)="archivo = a">{{ a }}</button>
+        }
+        <button class="btn btn-secondary btn-sm grpc-copiar" (click)="copiar(contratos[archivo])">Copiar</button>
+      </div>
+      <pre class="grpc-proto"><code>{{ contratos[archivo] }}</code></pre>
+    </div>
+  }
+
+  <div class="alert alert-info">
+    El navegador no puede llamar gRPC directamente: esta pantalla usa la API REST. En Render solo se publica el puerto HTTP;
+    para consumir gRPC desde fuera se requiere un servicio privado o un proxy gRPC-Web.
+  </div>
+</div>
