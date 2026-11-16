@@ -2,7 +2,9 @@
   <div class="page-header">
     <div>
       <h1>Panel de control</h1>
-      <p class="subtitulo">Resumen de la cartera y del recaudo de hoy</p>
+      <p class="subtitulo">Resumen de la cartera y del recaudo de hoy
+        @if (actualizadoEn) { · actualizado a las {{ actualizadoEn | date: 'HH:mm:ss' }} }
+      </p>
     </div>
     <div class="header-actions">
       <a routerLink="/ruta" class="btn btn-secondary">Ver ruta de cobro</a>

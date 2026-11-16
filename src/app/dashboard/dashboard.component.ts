@@ -51,6 +51,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private subs = new Subscription();
   actividad: EventoTiempoReal[] = [];
   antiguedad: TramoMora[] = [];
+  actualizadoEn: Date | null = null;
   readonly presentacion = PRESENTACION_EVENTOS;
 
   constructor(
@@ -111,6 +112,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.prestamos = prestamos;
         this.abonosHoy = abonos;
         this.calcular();
+        this.actualizadoEn = new Date();
         this.cargando = false;
       },
       error: (err) => {
