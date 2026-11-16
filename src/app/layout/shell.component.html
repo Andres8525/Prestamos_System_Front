@@ -14,6 +14,9 @@
       </div>
 
       <div class="topbar-acciones">
+        <span class="en-vivo" [ngClass]="estadoTiempoReal" [title]="'Eventos en tiempo real: ' + textoTiempoReal" aria-live="polite">
+          <i></i><span>{{ textoTiempoReal }}</span>
+        </span>
         <div class="usuario" [class.abierto]="menuUsuario">
           <button class="usuario-boton" (click)="menuUsuario = !menuUsuario" aria-haspopup="menu" [attr.aria-expanded]="menuUsuario">
             <span class="avatar">{{ iniciales }}</span>
