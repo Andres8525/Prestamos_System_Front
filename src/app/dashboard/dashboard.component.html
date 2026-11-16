@@ -114,6 +114,23 @@
       </div>
     </div>
 
+    @if (antiguedad.length) {
+      <div class="card antiguedad">
+        <h2 class="form-title">Antigüedad de la cartera</h2>
+        <p class="subtitulo-card">Saldo pendiente agrupado por días de atraso de cada cuota.</p>
+        <div class="tramos">
+          @for (t of antiguedad; track t.tramo; let i = $index) {
+            <div class="tramo" [class]="'tramo tramo-' + i">
+              <span>{{ t.tramo }}</span>
+              <div class="tramo-barra"><div [style.width.%]="(t.saldo / maxSaldoTramo) * 100"></div></div>
+              <b>{{ t.saldo | currency }}</b>
+              <small>{{ t.cuotas }} cuotas</small>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
     <div class="card actividad-vivo">
       <h2 class="form-title">Actividad en vivo <span class="ml-chip">WebSocket</span></h2>
       @if (actividad.length) {

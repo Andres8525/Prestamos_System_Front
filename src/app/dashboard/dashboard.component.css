@@ -158,3 +158,20 @@ a.plataforma-item:hover { border-color: var(--primario); }
 .actividad-icono { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--superficie-2); border: 1px solid var(--borde); }
 @keyframes entrar-actividad { from { opacity: 0; transform: translateX(-10px); } }
 @media (prefers-reduced-motion: reduce) { .actividad-item { animation: none; } }
+
+/* Antigüedad de cartera */
+.antiguedad { margin-top: 20px; }
+.subtitulo-card { font-size: 12.5px; color: var(--texto-suave); margin: -10px 0 14px; }
+.tramos { display: grid; gap: 10px; }
+.tramo { display: grid; grid-template-columns: 120px 1fr 110px 70px; align-items: center; gap: 12px; font-size: 13px; }
+.tramo b { text-align: right; font-variant-numeric: tabular-nums; }
+.tramo small { color: var(--texto-suave); text-align: right; }
+.tramo-barra { height: 12px; border-radius: 999px; background: var(--superficie-2); overflow: hidden; }
+.tramo-barra div { height: 100%; border-radius: inherit; transition: width 0.8s var(--curva); }
+.tramo-0 .tramo-barra div { background: #10b981; }
+.tramo-1 .tramo-barra div { background: #84cc16; }
+.tramo-2 .tramo-barra div { background: #f59e0b; }
+.tramo-3 .tramo-barra div { background: #f97316; }
+.tramo-4 .tramo-barra div { background: #ef4444; }
+.tramo-5 .tramo-barra div { background: #b91c1c; }
+@media (max-width: 640px) { .tramo { grid-template-columns: 1fr auto; } .tramo-barra { grid-column: 1 / -1; order: 3; } .tramo small { display: none; } }

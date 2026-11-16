@@ -3,7 +3,7 @@ import { Subscription, debounceTime, forkJoin } from 'rxjs';
 import { PrestamoService } from '../services/prestamo.service';
 import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { Prestamo } from '../models/prestamo.model';
-import { Abono } from '../models/cobranza.model';
+import { Abono, TramoMora } from '../models/cobranza.model';
 import { EstadoServidor, ServidorService } from '../services/servidor.service';
 import { WorkersService } from '../services/workers.service';
 import { GrpcService } from '../services/grpc.service';
@@ -50,6 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   plataforma: EstadoPlataforma = { servidor: 'comprobando', workers: null, grpc: null, asistente: null };
   private subs = new Subscription();
   actividad: EventoTiempoReal[] = [];
+  antiguedad: TramoMora[] = [];
   readonly presentacion = PRESENTACION_EVENTOS;
 
   constructor(
@@ -74,6 +75,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  get maxSaldoTramo(): number {
+    return Math.max(1, ...this.antiguedad.map((t) => t.saldo));
   }
 
   /** Servidor, workers, gRPC y asistente: cada consulta es independiente y un fallo no afecta a las demás. */
@@ -102,6 +107,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       abonos: this.cobranzaService.abonosDelDia()
     }).subscribe({
       next: ({ prestamos, abonos }) => {
+        this.cobranzaService.antiguedadCartera().subscribe({ next: (a) => (this.antiguedad = a) });
         this.prestamos = prestamos;
         this.abonosHoy = abonos;
         this.calcular();
