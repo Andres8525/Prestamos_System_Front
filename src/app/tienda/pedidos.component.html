@@ -1,0 +1,64 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <h1>Pedidos</h1>
+      <p class="subtitulo">Ventas de la tienda al contado y a crédito</p>
+    </div>
+    <a routerLink="/tienda" class="btn btn-primary">Ir a la tienda</a>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (cargando) {
+    <div class="loading-text">Cargando...</div>
+  } @else {
+    <div class="kpis">
+      <div class="kpi"><span>Pedidos</span><strong>{{ pedidos.length }}</strong></div>
+      <div class="kpi positivo"><span>Total vendido</span><strong>{{ totalVendido | currency }}</strong></div>
+      <div class="kpi"><span>Ventas a crédito</span><strong>{{ ventasCredito }}</strong></div>
+      <div class="kpi"><span>Ventas de contado</span><strong>{{ pedidos.length - ventasCredito }}</strong></div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Unidades</th><th>Total</th><th>Pago</th><th>Crédito</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (p of pedidos; track p.id) {
+            <tr>
+              <td>{{ p.id }}</td>
+              <td>{{ p.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ p.clienteNombre }}</td>
+              <td>{{ p.unidades }}</td>
+              <td><strong>{{ p.total | currency }}</strong></td>
+              <td><span class="badge" [ngClass]="p.tipoPago === 'CREDITO' ? 'estado-pagado' : 'estado-al_dia'">{{ p.tipoPago }}</span></td>
+              <td>
+                @if (p.prestamoId) {
+                  Préstamo #{{ p.prestamoId }} · {{ p.numeroCuotas }} × {{ p.valorCuota | currency }}
+                  @if (p.nivelRiesgo) { <span class="badge" [ngClass]="'riesgo-' + p.nivelRiesgo.toLowerCase()">{{ p.nivelRiesgo }}</span> }
+                } @else { — }
+              </td>
+              <td><button class="btn btn-ghost btn-sm" (click)="alternar(p.id)">{{ abierto === p.id ? 'Ocultar' : 'Detalle' }}</button></td>
+            </tr>
+            @if (abierto === p.id) {
+              <tr class="pedido-detalle">
+                <td colspan="8">
+                  <ul>
+                    @for (d of p.detalles; track d.productoId) {
+                      <li>{{ d.cantidad }} × {{ d.nombreProducto }} — {{ d.precioUnitario | currency }} c/u = <b>{{ d.subtotal | currency }}</b></li>
+                    }
+                  </ul>
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr><td colspan="8" class="empty-state">Aún no hay pedidos</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
