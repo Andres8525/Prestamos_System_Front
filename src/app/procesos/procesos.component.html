@@ -1,0 +1,128 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <h1>Procesos en segundo plano</h1>
+      <p class="subtitulo">Workers del servidor (cola con prioridad y reintentos) y Web Workers del navegador</p>
+    </div>
+    <button class="btn btn-secondary" (click)="cargar()">Actualizar</button>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (pool; as p) {
+    <div class="kpis">
+      <div class="kpi"><span>Hilos del pool</span><strong>{{ p.ocupados }} / {{ p.hilos }} <small>ocupados</small></strong></div>
+      <div class="kpi"><span>En cola</span><strong>{{ p.enCola }}</strong></div>
+      <div class="kpi positivo"><span>Completadas (desde el arranque)</span><strong>{{ p.completadas }}</strong></div>
+      <div class="kpi"><span>Intentos fallidos</span><strong>{{ p.fallidas }}</strong></div>
+      <div class="kpi"><span>Pendientes / en proceso</span><strong>{{ p.tareasPorEstado.PENDIENTE }} / {{ p.tareasPorEstado.EN_PROCESO }}</strong></div>
+    </div>
+
+    <div class="card ml-seccion">
+      <div class="procesos-cabecera">
+        <h2 class="form-title">Lanzar una tarea</h2>
+        <label class="procesos-prioridad">Prioridad
+          <input type="range" min="0" max="10" [(ngModel)]="prioridad" name="prioridad" />
+          <b>{{ prioridad }}</b>
+        </label>
+      </div>
+      <p class="ml-nota">Las tareas se guardan en la base de datos y las atiende el primer worker libre (mayor prioridad primero).</p>
+      <div class="tipos-tarea">
+        @for (t of p.tipos; track t.tipo) {
+          <button class="tipo-tarea" (click)="encolar(t)" [disabled]="!t.disponible || encolando === t.tipo">
+            <strong>{{ t.nombre }}</strong>
+            <span>{{ t.descripcion }}</span>
+            @if (encolando === t.tipo) { <em>Encolando…</em> }
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="card ml-seccion">
+    <h2 class="form-title">Tareas recientes
+      @if (hayActivas) { <span class="ml-chip">actualizando en vivo</span> }
+    </h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Tarea</th><th>Estado</th><th>Prioridad</th><th>Worker</th><th>Intentos</th><th>Duración</th><th>Resultado</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (t of tareas; track t.id) {
+            <tr>
+              <td>{{ t.id }}</td>
+              <td>{{ t.nombre }}<br /><small class="texto-suave">{{ t.creadaEn | date: 'dd/MM HH:mm:ss' }} · {{ t.solicitadaPor ?? 'sistema' }}</small></td>
+              <td><span class="badge tarea-estado" [ngClass]="claseEstado(t)">{{ t.estado.replace('_', ' ') }}</span></td>
+              <td>{{ t.prioridad }}</td>
+              <td>{{ t.worker ?? '—' }}</td>
+              <td>{{ t.intentos }} / {{ t.maxIntentos }}</td>
+              <td>{{ t.duracionMs !== null ? (t.duracionMs | number) + ' ms' : '—' }}</td>
+              <td class="tarea-resumen">{{ t.error ?? t.resumen ?? '—' }}</td>
+              <td class="acciones">
+                @if (t.estado === 'PENDIENTE') { <button class="btn btn-danger btn-sm" (click)="cancelar(t)">Cancelar</button> }
+                @if (t.estado === 'FALLIDA' || t.estado === 'CANCELADA') { <button class="btn btn-secondary btn-sm" (click)="reintentar(t)">Reintentar</button> }
+                @if (t.tieneResultado) { <button class="btn btn-primary btn-sm" (click)="descargar(t)">Descargar</button> }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="9" class="texto-suave" style="text-align:center">Aún no hay tareas. Lanza una arriba.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card ml-seccion">
+    <h2 class="form-title">Proyección de recaudo (Web Worker)</h2>
+    <p class="ml-nota">
+      Simulación Monte Carlo con la probabilidad de incumplimiento que el modelo de ML asignó a cada préstamo activo.
+      Corre en un hilo aparte del navegador{{ webWorkersDisponibles ? '' : ' (no disponible en este navegador: se usa el hilo principal)' }},
+      así la pantalla sigue respondiendo aunque se simulen cientos de miles de escenarios.
+    </p>
+    <div class="simulador">
+      <div>
+        <div class="deslizador">
+          <label for="p-esc">Escenarios simulados <b>{{ escenarios | number }}</b></label>
+          <input id="p-esc" type="range" min="5000" max="300000" step="5000" [(ngModel)]="escenarios" name="escenarios" />
+        </div>
+        <div class="deslizador">
+          <label for="p-rec">Recuperación promedio de un préstamo en mora <b>{{ recuperacion | percent }}</b></label>
+          <input id="p-rec" type="range" min="0" max="1" step="0.05" [(ngModel)]="recuperacion" name="recuperacion" />
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" (click)="proyectar()" [disabled]="proyectando">
+            @if (proyectando) { <span class="spinner"></span> Simulando… {{ avance | percent }} } @else { Proyectar recaudo }
+          </button>
+          @if (proyectando) { <button class="btn btn-secondary" (click)="cancelarProyeccion()">Detener</button> }
+        </div>
+        @if (proyectando) {
+          <div class="barra proyeccion-avance"><div [style.width.%]="avance * 100"></div></div>
+        }
+        @if (errorProyeccion) { <div class="alert alert-error" style="margin-top:12px">{{ errorProyeccion }}</div> }
+      </div>
+      <div>
+        @if (proyeccion; as r) {
+          <div class="metricas" style="margin-top:0">
+            <div class="metrica"><span>Saldo por cobrar</span><strong>{{ r.saldoTotal | currency }}</strong></div>
+            <div class="metrica"><span>Recaudo esperado</span><strong>{{ r.esperado | currency }}</strong></div>
+            <div class="metrica"><span>Pérdida esperada</span><strong>{{ r.perdidaEsperada | currency }}</strong></div>
+            <div class="metrica"><span>Escenario pesimista (P5)</span><strong>{{ r.p5 | currency }}</strong></div>
+            <div class="metrica"><span>Escenario optimista (P95)</span><strong>{{ r.p95 | currency }}</strong></div>
+          </div>
+          <div class="histograma" role="img" aria-label="Distribución del recaudo simulado">
+            @for (b of r.histograma; track $index) {
+              <div [style.height.%]="(b.frecuencia / maxHistograma) * 100"
+                   [title]="(b.desde | currency) + ' – ' + (b.hasta | currency) + ': ' + b.frecuencia + ' escenarios'"></div>
+            }
+          </div>
+          <p class="ml-nota" style="margin:8px 0 0">{{ r.escenarios | number }} escenarios · {{ r.prestamos }} préstamos · calculado en {{ r.milisegundos | number }} ms</p>
+        } @else {
+          <div class="loading-text" style="min-height:150px">Configura la simulación y pulsa «Proyectar recaudo».</div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
