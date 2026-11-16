@@ -35,3 +35,4 @@ td.acciones { white-space: nowrap; display: flex; gap: 6px; }
   transition: height 0.4s ease;
 }
 @media (prefers-reduced-motion: reduce) { .tarea-en-proceso { animation: none; } }
+.sin-salto { white-space: nowrap; }

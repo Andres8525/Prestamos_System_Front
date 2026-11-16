@@ -57,9 +57,9 @@
               <td>{{ t.nombre }}<br /><small class="texto-suave">{{ t.creadaEn | date: 'dd/MM HH:mm:ss' }} · {{ t.solicitadaPor ?? 'sistema' }}</small></td>
               <td><span class="badge tarea-estado" [ngClass]="claseEstado(t)">{{ t.estado.replace('_', ' ') }}</span></td>
               <td>{{ t.prioridad }}</td>
-              <td>{{ t.worker ?? '—' }}</td>
+              <td class="sin-salto">{{ t.worker ?? '—' }}</td>
               <td>{{ t.intentos }} / {{ t.maxIntentos }}</td>
-              <td>{{ t.duracionMs !== null ? (t.duracionMs | number) + ' ms' : '—' }}</td>
+              <td class="sin-salto">{{ t.duracionMs !== null ? (t.duracionMs | number) + ' ms' : '—' }}</td>
               <td class="tarea-resumen">{{ t.error ?? t.resumen ?? '—' }}</td>
               <td class="acciones">
                 @if (t.estado === 'PENDIENTE') { <button class="btn btn-danger btn-sm" (click)="cancelar(t)">Cancelar</button> }
