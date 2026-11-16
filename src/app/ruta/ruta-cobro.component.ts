@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, debounceTime, filter } from 'rxjs';
+import { TiempoRealService } from '../services/tiempo-real.service';
 import { CobranzaService, hoyISO, mensajeError } from '../services/cobranza.service';
 import { Cobrador, ParadaRuta, RutaCobro } from '../models/cobranza.model';
 
@@ -8,7 +10,7 @@ import { Cobrador, ParadaRuta, RutaCobro } from '../models/cobranza.model';
   standalone: false,
   templateUrl: './ruta-cobro.component.html'
 })
-export class RutaCobroComponent implements OnInit {
+export class RutaCobroComponent implements OnInit, OnDestroy {
   cobradores: Cobrador[] = [];
   cobradorId?: number;
   fecha = hoyISO();
@@ -21,7 +23,9 @@ export class RutaCobroComponent implements OnInit {
   error = '';
   mensaje = '';
 
-  constructor(private cobranzaService: CobranzaService) {}
+  private subs = new Subscription();
+
+  constructor(private cobranzaService: CobranzaService, private tiempoReal: TiempoRealService) {}
 
   get esHoy(): boolean {
     return this.fecha === hoyISO();
@@ -33,6 +37,10 @@ export class RutaCobroComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Abonos que otro usuario registra para este cobrador actualizan la ruta sin recargar la página.
+    this.subs.add(this.tiempoReal.de('ABONO_REGISTRADO', 'PRESTAMO_CREADO')
+      .pipe(filter((e) => this.esHoy && Number(e.datos['cobradorId']) === this.cobradorId), debounceTime(400))
+      .subscribe(() => this.cargarRuta()));
     this.cobranzaService.obtenerCobradores(true).subscribe({
       next: (d) => {
         this.cobradores = d;
@@ -43,6 +51,10 @@ export class RutaCobroComponent implements OnInit {
       },
       error: (err) => (this.error = mensajeError(err, 'Error al cargar cobradores'))
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 
   cargarRuta(): void {
