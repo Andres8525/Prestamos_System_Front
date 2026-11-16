@@ -48,7 +48,8 @@ export class MenuService {
     {
       titulo: 'Plataforma',
       items: [
-        { label: 'Procesos', route: '/procesos', icon: 'workers' }
+        { label: 'Procesos', route: '/procesos', icon: 'workers' },
+        { label: 'Servicios gRPC', route: '/grpc', icon: 'grpc' }
       ]
     }
   ];

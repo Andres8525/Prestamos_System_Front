@@ -17,6 +17,7 @@ import { AccesoComponent } from './auth/acceso.component';
 import { MachineLearningComponent } from './ml/machine-learning.component';
 import { ShellComponent } from './layout/shell.component';
 import { ProcesosComponent } from './procesos/procesos.component';
+import { GrpcComponent } from './grpc/grpc.component';
 import { authInterceptor } from './auth/auth.interceptor';
 
 // Standalone components
@@ -38,7 +39,8 @@ import { AccesoFondoComponent } from './auth/acceso-fondo.component';
     CuadreCajaComponent,
     ScoringRiesgoComponent,
     MachineLearningComponent,
-    ProcesosComponent
+    ProcesosComponent,
+    GrpcComponent
   ],
   imports: [
     BrowserModule,

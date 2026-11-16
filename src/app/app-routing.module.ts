@@ -12,6 +12,7 @@ import { AccesoComponent } from './auth/acceso.component';
 import { MachineLearningComponent } from './ml/machine-learning.component';
 import { ShellComponent } from './layout/shell.component';
 import { ProcesosComponent } from './procesos/procesos.component';
+import { GrpcComponent } from './grpc/grpc.component';
 import { authGuard, invitadoGuard } from './auth/auth.guard';
 
 const routes: Routes = [
@@ -35,7 +36,8 @@ const routes: Routes = [
       { path: 'caja', component: CuadreCajaComponent, title: 'Cuadre de caja · CrediRuta' },
       { path: 'scoring', component: ScoringRiesgoComponent, title: 'Scoring IA · CrediRuta' },
       { path: 'ml', component: MachineLearningComponent, title: 'Machine Learning · CrediRuta' },
-      { path: 'procesos', component: ProcesosComponent, title: 'Procesos · CrediRuta' }
+      { path: 'procesos', component: ProcesosComponent, title: 'Procesos · CrediRuta' },
+      { path: 'grpc', component: GrpcComponent, title: 'gRPC · CrediRuta' }
     ]
   },
   { path: '**', redirectTo: '' }
