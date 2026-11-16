@@ -75,7 +75,36 @@
           <div class="metrica"><span>Brier score</span><strong>{{ r.evaluacionPrueba.brier | number: '1.3-3' }}</strong></div>
         </div>
       </div>
-<!--ROC-->
+      <div class="card">
+        <h2 class="form-title">Curva ROC</h2>
+        <p class="ml-nota">Qué tan bien separa a morosos de buenos pagadores en cada umbral. La diagonal es un modelo al azar (AUC 0.5).</p>
+        <svg class="roc" viewBox="-12 -4 116 118" role="img"
+             [attr.aria-label]="'Curva ROC con AUC ' + r.evaluacionPrueba.auc">
+          <defs>
+            <linearGradient id="roc-relleno" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#6366f1" stop-opacity="0.35" />
+              <stop offset="1" stop-color="#6366f1" stop-opacity="0.02" />
+            </linearGradient>
+          </defs>
+          @for (g of [0, 25, 50, 75, 100]; track g) {
+            <line class="rejilla" [attr.x1]="g" y1="0" [attr.x2]="g" y2="100" />
+            <line class="rejilla" x1="0" [attr.y1]="g" x2="100" [attr.y2]="g" />
+            <text [attr.x]="g" y="106" text-anchor="middle">{{ g / 100 }}</text>
+            <text x="-3" [attr.y]="100 - g + 1.5" text-anchor="end">{{ g / 100 }}</text>
+          }
+          <line class="azar" x1="0" y1="100" x2="100" y2="0" />
+          <path class="area" [attr.d]="areaRoc" />
+          <path class="curva" [attr.d]="rutaRoc" />
+          @for (p of puntosRoc; track $index) {
+            <circle class="punto" [attr.cx]="p.fpr * 100" [attr.cy]="100 - p.tpr * 100" r="1.1">
+              <title>Umbral {{ p.umbral }}: {{ p.tpr | percent }} de morosos detectados, {{ p.fpr | percent }} de falsas alarmas</title>
+            </circle>
+          }
+          <text class="auc-texto" x="96" y="92" text-anchor="end">AUC {{ r.evaluacionPrueba.auc | number: '1.3-3' }}</text>
+          <text x="50" y="113" text-anchor="middle">Tasa de falsos positivos</text>
+          <text x="-10" y="50" text-anchor="middle" transform="rotate(-90 -10 50)">Tasa de verdaderos positivos</text>
+        </svg>
+      </div>
     </div>
   }
 </div>
