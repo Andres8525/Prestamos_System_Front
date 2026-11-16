@@ -16,6 +16,7 @@ import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
 import { AccesoComponent } from './auth/acceso.component';
 import { MachineLearningComponent } from './ml/machine-learning.component';
 import { ShellComponent } from './layout/shell.component';
+import { ProcesosComponent } from './procesos/procesos.component';
 import { authInterceptor } from './auth/auth.interceptor';
 
 // Standalone components
@@ -36,7 +37,8 @@ import { AccesoFondoComponent } from './auth/acceso-fondo.component';
     RutaCobroComponent,
     CuadreCajaComponent,
     ScoringRiesgoComponent,
-    MachineLearningComponent
+    MachineLearningComponent,
+    ProcesosComponent
   ],
   imports: [
     BrowserModule,
