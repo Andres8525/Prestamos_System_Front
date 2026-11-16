@@ -1,0 +1,62 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <h1>Asistente IA</h1>
+      <p class="subtitulo">Pregunta sobre la cartera en lenguaje natural. Funciona con modelos de lenguaje de Groq.</p>
+    </div>
+    @if (mensajes.length) {
+      <button class="btn btn-secondary" (click)="limpiar()">Nueva conversación</button>
+    }
+  </div>
+
+  @if (estado; as e) {
+    <div class="alert" [ngClass]="e.configurado ? 'alert-success' : 'alert-info'">
+      @if (e.configurado) {
+        Conectado a {{ e.proveedor }} · modelo <b>{{ e.modelo }}</b>. Solo se envían indicadores agregados o anónimos: nunca nombres, cédulas ni teléfonos.
+      } @else {
+        Modo local: falta la variable <code>GROQ_API_KEY</code> en el backend. El asistente responde con los indicadores de la cartera sin IA generativa.
+      }
+    </div>
+  }
+
+  <div class="card chat">
+    <div class="chat-conversacion" #conversacion aria-live="polite">
+      @if (!mensajes.length) {
+        <div class="chat-vacio">
+          <div class="chat-avatar">IA</div>
+          <p>¿En qué te ayudo? Prueba con alguna de estas preguntas:</p>
+          <div class="chat-sugerencias">
+            @for (s of sugerencias; track s) {
+              <button type="button" (click)="enviar(s)">{{ s }}</button>
+            }
+          </div>
+        </div>
+      }
+      @for (m of mensajes; track $index) {
+        <div class="chat-mensaje" [ngClass]="m.rol">
+          <div class="chat-burbuja">{{ m.texto }}</div>
+          <small>
+            {{ m.hora | date: 'HH:mm' }}
+            @if (m.origen === 'GROQ') { · {{ m.modelo }}@if (m.tokens) { · {{ m.tokens }} tokens } }
+            @if (m.origen === 'LOCAL') { · respuesta local }
+          </small>
+        </div>
+      }
+      @if (enviando) {
+        <div class="chat-mensaje asistente">
+          <div class="chat-burbuja chat-escribiendo"><i></i><i></i><i></i></div>
+        </div>
+      }
+    </div>
+
+    <form class="chat-entrada" (ngSubmit)="enviar()">
+      <textarea name="pregunta" rows="2" [(ngModel)]="pregunta" (keydown)="alPresionar($event)"
+                placeholder="Escribe tu pregunta… (Enter para enviar, Shift+Enter para nueva línea)"
+                [attr.maxlength]="largoMaximo" aria-label="Pregunta para el asistente"></textarea>
+      <div class="chat-acciones">
+        <small [class.limite]="pregunta.length > largoMaximo * 0.9">{{ pregunta.length }}/{{ largoMaximo }}</small>
+        <button type="submit" class="btn btn-primary" [disabled]="!puedeEnviar">Enviar</button>
+      </div>
+    </form>
+  </div>
+</div>
