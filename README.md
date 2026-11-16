@@ -1,89 +1,50 @@
-# Sistema de Cobro - Frontend Angular
+# CrediRuta — Frontend
 
-Frontend en Angular para el Sistema de Cobro de Préstamos.
+Aplicación web (Angular 21) de la plataforma de **microcréditos y rutas de cobro diario**.
+Consume la API del repositorio `Prestamos_System_Back`.
 
-## Características
+## Funcionalidades
 
-✅ **Dashboard**: Panel de control con estadísticas de clientes
-✅ **Gestión de Clientes**: CRUD completo de clientes
-✅ **Gestión de Préstamos**: Creación y visualización de préstamos
-✅ **Gestión de Pagos**: Control de pagos y seguimiento de atrasos
-✅ **Indicadores Visuales**: Estados de cobranza (Verde, Amarillo, Rojo)
-
-## Requisitos
-
-- Node.js 18+
-- npm 9+
-- Angular CLI 21+
-
-## Instalación
-
-```bash
-# Instalar dependencias
-npm install
-
-# Iniciar servidor de desarrollo
-npm start
-
-# Construir para producción
-npm run build
-```
-
-## Estructura del Proyecto
-
-```
-src/
-├── app/
-│   ├── models/              # Modelos de datos (Cliente, Prestamo, Pago)
-│   ├── services/            # Servicios HTTP y lógica
-│   ├── components/          # Componentes reutilizables
-│   ├── clientes/            # Componente de gestión de clientes
-│   ├── prestamos/           # Componente de gestión de préstamos
-│   ├── pagos/               # Componente de gestión de pagos
-│   ├── dashboard/           # Panel de control
-│   ├── environments/        # Configuración de ambientes
-│   ├── app.module.ts        # Módulo principal
-│   ├── app-routing.module.ts # Configuración de rutas
-│   └── app.component.ts     # Componente raíz
-├── index.html               # Archivo HTML principal
-├── main.ts                  # Punto de entrada
-└── styles.css              # Estilos globales
-```
-
-## Configuración de API
-
-La URL de la API se configura en `src/app/environments/environment.ts`:
-
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8080/api'
-};
-```
+- **Acceso:** registro, inicio y cierre de sesión. Las rutas privadas están protegidas y el token se envía solo a la API.
+- **Cartera:** clientes, préstamos con simulador de intereses y cuotas con saldo.
+- **Cobranza:** cobradores, ruta de cobro diaria con registro de abonos y cuadre de caja.
+- **Scoring IA:** probabilidad de incumplimiento por cliente y alerta antes de renovar un crédito.
+- **Tienda:** catálogo, carrito, venta al contado o a crédito (genera el préstamo) e historial de pedidos.
 
 ## Desarrollo
 
-El servidor de desarrollo estará disponible en `http://localhost:4200/`.
-
-## Compilación
-
-Para una compilación de producción:
+Requiere Node 22.
 
 ```bash
-npm run build
+npm ci
+npm start        # http://localhost:4200  (API en http://localhost:8081/api)
+npm test         # pruebas unitarias (Vitest)
+npm run build    # compilación de producción en dist/sistema_cobro/browser
 ```
 
-Los archivos compilados estarán en el directorio `dist/`.
+Con el backend en modo desarrollo se puede entrar con `admin@cobro.com` / `Admin123*` o crear una cuenta en **/registro**.
 
-## Testing
+## Configuración de la API
 
-```bash
-npm test
+| Entorno | Archivo | Valor |
+|---|---|---|
+| Desarrollo | `src/app/environments/environment.ts` | `http://localhost:8081/api` |
+| Producción | `src/app/environments/environment.prod.ts` | URL del backend en Render + `/api` |
+
+## Despliegue en Vercel
+
+1. En Vercel: **Add New → Project** e importar este repositorio.
+2. No hay que cambiar nada: `vercel.json` ya define la instalación (`npm ci`), el build (`npm run build`),
+   la carpeta de salida (`dist/sistema_cobro/browser`) y la reescritura de rutas para la SPA.
+3. Verificar que `apiUrl` en `environment.prod.ts` apunte al backend desplegado.
+4. En el backend (Render), `ALLOWED_ORIGINS` debe incluir el dominio de Vercel (por defecto `https://*.vercel.app`).
+
+## Estructura
+
 ```
-
-## Tecnologías Utilizadas
-
-- Angular 21.2
-- TypeScript 5.9
-- RxJS 7.8
-- Bootstrap para estilos
+src/app/auth        login, registro, guards e interceptor
+src/app/layout      marco privado (menú lateral y barra superior)
+src/app/tienda      catálogo, carrito, productos y pedidos
+src/app/services    acceso a la API, sesión, carrito y notificaciones
+src/styles          tokens de diseño, componentes, animaciones y layouts
+```
