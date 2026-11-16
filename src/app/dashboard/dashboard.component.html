@@ -113,5 +113,23 @@
         }
       </div>
     </div>
+
+    <div class="card plataforma">
+      <h2 class="form-title">Estado de la plataforma</h2>
+      <div class="plataforma-grid">
+        <div class="plataforma-item" [ngClass]="plataforma.servidor">
+          <i></i><div><b>Servidor</b><span>{{ plataforma.servidor === 'en-linea' ? 'en línea (se mantiene activo)' : plataforma.servidor }}</span></div>
+        </div>
+        <a routerLink="/procesos" class="plataforma-item" [class.en-linea]="plataforma.workers && plataforma.workers !== 'no disponible'">
+          <i></i><div><b>Workers</b><span>{{ plataforma.workers ?? 'consultando…' }}</span></div>
+        </a>
+        <a routerLink="/grpc" class="plataforma-item" [class.en-linea]="plataforma.grpc?.startsWith('activo')">
+          <i></i><div><b>gRPC</b><span>{{ plataforma.grpc ?? 'consultando…' }}</span></div>
+        </a>
+        <a routerLink="/asistente" class="plataforma-item" [class.en-linea]="plataforma.asistente?.startsWith('Groq')">
+          <i></i><div><b>Asistente IA</b><span>{{ plataforma.asistente ?? 'consultando…' }}</span></div>
+        </a>
+      </div>
+    </div>
   }
 </div>
