@@ -43,7 +43,8 @@
 
   <div class="card ml-seccion">
     <h2 class="form-title">Tareas recientes
-      @if (hayActivas) { <span class="ml-chip">actualizando en vivo</span> }
+      @if (actualizacionEnVivo) { <span class="ml-chip">en vivo por WebSocket</span> }
+      @else if (hayActivas) { <span class="ml-chip">actualizando cada 3 s</span> }
     </h2>
     <div class="table-wrapper">
       <table>

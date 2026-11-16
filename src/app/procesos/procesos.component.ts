@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, timer } from 'rxjs';
+import { Subscription, debounceTime, timer } from 'rxjs';
+import { TiempoRealService } from '../services/tiempo-real.service';
 import { WorkersService } from '../services/workers.service';
 import { PrestamoService } from '../services/prestamo.service';
 import { NotificacionService } from '../services/notificacion.service';
@@ -9,9 +10,9 @@ import { ESTADOS_ACTIVOS, EstadoPool, Tarea, TipoTareaInfo } from '../models/wor
 import { PrestamoProyeccion, ResultadoProyeccion } from '../workers/proyeccion';
 import { EstadoPago } from '../models/prestamo.model';
 
-/** Intervalo de refresco mientras hay tareas pendientes o en proceso. */
-const REFRESCO_ACTIVO_MS = 1500;
-const REFRESCO_REPOSO_MS = 15000;
+/** Respaldo por si el WebSocket no está conectado: consulta periódica más lenta. */
+const REFRESCO_ACTIVO_MS = 3000;
+const REFRESCO_REPOSO_MS = 20000;
 
 /**
  * Procesos en segundo plano:
@@ -41,21 +42,31 @@ export class ProcesosComponent implements OnInit, OnDestroy {
   private calculo?: Subscription;
 
   private refresco?: Subscription;
+  private enVivo = false;
+  private subs = new Subscription();
 
   constructor(
     private workers: WorkersService,
     private prestamoService: PrestamoService,
     private webWorkers: WebWorkerService,
-    private notificaciones: NotificacionService
+    private notificaciones: NotificacionService,
+    private tiempoReal: TiempoRealService
   ) {}
 
   ngOnInit(): void {
+    this.subs.add(this.tiempoReal.estado$.subscribe((e) => (this.enVivo = e === 'conectado')));
+    this.subs.add(this.tiempoReal.de('TAREA_ACTUALIZADA').pipe(debounceTime(150)).subscribe(() => this.cargar()));
     this.cargar();
   }
 
   ngOnDestroy(): void {
+    this.subs.unsubscribe();
     this.refresco?.unsubscribe();
     this.calculo?.unsubscribe();
+  }
+
+  get actualizacionEnVivo(): boolean {
+    return this.enVivo;
   }
 
   get hayActivas(): boolean {
@@ -75,12 +86,11 @@ export class ProcesosComponent implements OnInit, OnDestroy {
     });
     this.workers.tareas().subscribe({
       next: (t) => {
-        const antes = new Map(this.tareas.map((x) => [x.id, x.estado]));
         this.tareas = t;
         this.error = '';
-        t.filter((x) => antes.get(x.id) && antes.get(x.id) !== x.estado && x.estado === 'COMPLETADA')
-          .forEach((x) => this.notificaciones.exito(`${x.nombre}: ${x.resumen ?? 'completada'}`));
-        this.refresco = timer(this.hayActivas ? REFRESCO_ACTIVO_MS : REFRESCO_REPOSO_MS).subscribe(() => this.cargar());
+        if (!this.enVivo) {
+          this.refresco = timer(this.hayActivas ? REFRESCO_ACTIVO_MS : REFRESCO_REPOSO_MS).subscribe(() => this.cargar());
+        }
       },
       error: (err) => {
         this.error = mensajeError(err, 'No se pudieron cargar las tareas');
@@ -95,7 +105,7 @@ export class ProcesosComponent implements OnInit, OnDestroy {
       next: (t) => {
         this.encolando = null;
         this.notificaciones.info(`"${t.nombre}" quedó en la cola (#${t.id})`);
-        this.cargar();
+        if (!this.enVivo) this.cargar();
       },
       error: (err) => {
         this.encolando = null;
