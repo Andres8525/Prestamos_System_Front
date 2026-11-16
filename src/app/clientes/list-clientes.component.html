@@ -1,9 +1,15 @@
 <div class="list-container">
   <div class="page-header">
     <h1>Gestión de Clientes</h1>
-    <button class="btn btn-primary" (click)="toggleFormulario()">
-      {{ mostraFormulario ? 'Cancelar' : '+ Nuevo Cliente' }}
-    </button>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="exportarCsv()" [disabled]="exportando || !clientes.length"
+              title="El archivo se genera en un Web Worker">
+        {{ exportando ? 'Generando…' : 'Exportar CSV' }}
+      </button>
+      <button class="btn btn-primary" (click)="toggleFormulario()">
+        {{ mostraFormulario ? 'Cancelar' : '+ Nuevo Cliente' }}
+      </button>
+    </div>
   </div>
 
   @if (error) {

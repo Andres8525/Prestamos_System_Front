@@ -3,6 +3,7 @@ import { ClienteService } from '../services/cliente.service';
 import { Cliente } from '../models/cliente.model';
 import { Cobrador } from '../models/cobranza.model';
 import { CobranzaService } from '../services/cobranza.service';
+import { WebWorkerService, descargarArchivo } from '../services/web-worker.service';
 
 @Component({
   selector: 'app-list-clientes',
@@ -12,6 +13,7 @@ import { CobranzaService } from '../services/cobranza.service';
 })
 export class ListClientesComponent implements OnInit {
   clientes: Cliente[] = [];
+  exportando = false;
   cobradores: Cobrador[] = [];
   nuevoCliente: Cliente = { cedula: '', nombre: '', direccion: '', telefono: '' };
   mostraFormulario = false;
@@ -19,7 +21,25 @@ export class ListClientesComponent implements OnInit {
   cargando = false;
   error = '';
 
-  constructor(private clienteService: ClienteService, private cobranzaService: CobranzaService) {}
+  constructor(private clienteService: ClienteService, private cobranzaService: CobranzaService,
+              private workers: WebWorkerService) {}
+
+  /** Exporta la lista a CSV; el archivo se arma en un Web Worker. */
+  exportarCsv(): void {
+    this.exportando = true;
+    this.workers.csv({
+      columnas: [
+        { clave: 'id', titulo: 'ID' }, { clave: 'cedula', titulo: 'Cédula' }, { clave: 'nombre', titulo: 'Nombre' },
+        { clave: 'direccion', titulo: 'Dirección' }, { clave: 'telefono', titulo: 'Teléfono' },
+        { clave: 'cobradorNombre', titulo: 'Cobrador' }, { clave: 'zona', titulo: 'Zona' }, { clave: 'ordenRuta', titulo: 'Orden en ruta' }
+      ],
+      filas: this.clientes as unknown as Record<string, unknown>[]
+    }).subscribe({
+      next: (csv) => descargarArchivo(`clientes-${new Date().toISOString().slice(0, 10)}.csv`, csv),
+      error: () => (this.error = 'No se pudo generar el CSV'),
+      complete: () => (this.exportando = false)
+    });
+  }
 
   ngOnInit(): void {
     this.cargarClientes();
