@@ -9,6 +9,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ListClientesComponent } from './clientes/list-clientes.component';
 import { ListPrestamosComponent } from './prestamos/list-prestamos.component';
 import { ListPagosComponent } from './pagos/list-pagos.component';
+import { ListCobradoresComponent } from './cobradores/list-cobradores.component';
+import { RutaCobroComponent } from './ruta/ruta-cobro.component';
+import { CuadreCajaComponent } from './caja/cuadre-caja.component';
+import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
 
 // Standalone components
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
@@ -19,7 +23,11 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
     DashboardComponent,
     ListClientesComponent,
     ListPrestamosComponent,
-    ListPagosComponent
+    ListPagosComponent,
+    ListCobradoresComponent,
+    RutaCobroComponent,
+    CuadreCajaComponent,
+    ScoringRiesgoComponent
   ],
   imports: [
     BrowserModule,

@@ -14,7 +14,11 @@ export class MenuService {
     { label: 'Dashboard', route: '/dashboard', icon: 'dashboard' },
     { label: 'Clientes',  route: '/clientes',  icon: 'clients'   },
     { label: 'Préstamos', route: '/prestamos', icon: 'loans'     },
-    { label: 'Pagos',     route: '/pagos',     icon: 'payments'  }
+    { label: 'Cuotas',    route: '/pagos',     icon: 'payments'  },
+    { label: 'Cobradores', route: '/cobradores', icon: 'agents'  },
+    { label: 'Ruta de cobro', route: '/ruta',  icon: 'route'     },
+    { label: 'Cuadre de caja', route: '/caja', icon: 'cash'      },
+    { label: 'Scoring IA', route: '/scoring',  icon: 'ai'        }
   ];
 
   obtenerMenuItems(): MenuItem[] {

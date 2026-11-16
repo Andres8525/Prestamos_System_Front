@@ -14,9 +14,8 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have title 'Sistema de Cobro'`, () => {
+  it('should start with the sidebar expanded', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('Sistema de Cobro');
+    expect(fixture.componentInstance.sidebarCollapsed).toBe(false);
   });
 });
