@@ -1,6 +1,9 @@
 <div class="list-container">
   <div class="page-header">
-    <h1>Gestión de Clientes</h1>
+    <div>
+      <h1>Clientes</h1>
+      <p class="subtitulo">Datos de contacto, cobrador asignado y orden de visita en la ruta</p>
+    </div>
     <div class="header-actions">
       <button class="btn btn-secondary" (click)="exportarCsv()" [disabled]="exportando || !clientes.length"
               title="El archivo se genera en un Web Worker">
