@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
 export const ESPERA_MAXIMA_MS = 75000;
 
 /** Rutas que no requieren sesión: no se les envía token ni cierran la sesión si responden 401. */
-const RUTAS_PUBLICAS = /\/(auth\/(login|register|verificar-email)|health)$/;
+const RUTAS_PUBLICAS = /\/(auth\/(login|register|verificar-email)|health|ping)$/;
 
 /**
  * Agrega el token a las peticiones dirigidas a la API (nunca a otros dominios),
