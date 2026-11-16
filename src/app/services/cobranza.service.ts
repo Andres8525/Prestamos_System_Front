@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
-import { Abono, Cobrador, CuadreCaja, ModeloScoring, RutaCobro, Scoring } from '../models/cobranza.model';
+import { Abono, Cobrador, CuadreCaja, ModeloScoring, RutaCobro, Scoring, TramoMora } from '../models/cobranza.model';
 
 /** Servicios de la operación en terreno: cobradores, rutas, abonos, caja y scoring IA. */
 @Injectable({ providedIn: 'root' })
@@ -31,6 +31,15 @@ export class CobranzaService {
   // --- Ruta y abonos
   obtenerRuta(cobradorId: number, fecha?: string): Observable<RutaCobro> {
     return this.http.get<RutaCobro>(`${this.api}/rutas/cobrador/${cobradorId}`, { params: this.fecha(fecha) });
+  }
+
+  /** Ruta ordenada por urgencia (cola de prioridad en el servidor). */
+  obtenerRutaPriorizada(cobradorId: number, fecha?: string): Observable<RutaCobro> {
+    return this.http.get<RutaCobro>(`${this.api}/rutas/cobrador/${cobradorId}/priorizada`, { params: this.fecha(fecha) });
+  }
+
+  antiguedadCartera(): Observable<TramoMora[]> {
+    return this.http.get<TramoMora[]>(`${this.api}/panel/antiguedad`);
   }
 
   registrarAbono(prestamoId: number, monto: number, cobradorId?: number, observacion?: string): Observable<Abono> {

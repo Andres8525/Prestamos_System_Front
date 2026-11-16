@@ -119,3 +119,10 @@ export interface Scoring {
   factores: FactorRiesgo[];
   modelo: ModeloScoring;
 }
+
+/** Cuotas pendientes y saldo de un tramo de días de atraso (antigüedad de cartera). */
+export interface TramoMora {
+  tramo: string;
+  cuotas: number;
+  saldo: number;
+}
