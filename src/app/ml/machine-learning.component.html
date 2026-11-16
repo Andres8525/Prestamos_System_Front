@@ -51,5 +51,31 @@
         </table>
       </div>
     </div>
+
+    <div class="ml-grid ml-seccion">
+      <div class="card">
+        <h2 class="form-title">Matriz de confusión</h2>
+        <p class="ml-nota">Resultados sobre {{ r.evaluacionPrueba.muestras }} casos de prueba que el modelo no vio al entrenar (umbral 50 %).</p>
+        <div class="matriz">
+          <span></span>
+          <span class="eje">Predice: pagará</span>
+          <span class="eje">Predice: incumplirá</span>
+          <span class="eje">Real:<br />pagó</span>
+          <div class="celda acierto"><strong>{{ r.evaluacionPrueba.matriz.verdaderosNegativos }}</strong>Verdaderos negativos</div>
+          <div class="celda fallo"><strong>{{ r.evaluacionPrueba.matriz.falsosPositivos }}</strong>Falsas alarmas</div>
+          <span class="eje">Real:<br />incumplió</span>
+          <div class="celda fallo"><strong>{{ r.evaluacionPrueba.matriz.falsosNegativos }}</strong>Morosos no detectados</div>
+          <div class="celda acierto"><strong>{{ r.evaluacionPrueba.matriz.verdaderosPositivos }}</strong>Morosos detectados</div>
+        </div>
+        <div class="metricas">
+          <div class="metrica"><span>Exactitud</span><strong>{{ r.evaluacionPrueba.exactitud | percent: '1.1-1' }}</strong></div>
+          <div class="metrica"><span>Precisión</span><strong>{{ r.evaluacionPrueba.precision | percent: '1.1-1' }}</strong></div>
+          <div class="metrica"><span>Sensibilidad</span><strong>{{ r.evaluacionPrueba.sensibilidad | percent: '1.1-1' }}</strong></div>
+          <div class="metrica"><span>Especificidad</span><strong>{{ r.evaluacionPrueba.especificidad | percent: '1.1-1' }}</strong></div>
+          <div class="metrica"><span>Brier score</span><strong>{{ r.evaluacionPrueba.brier | number: '1.3-3' }}</strong></div>
+        </div>
+      </div>
+<!--ROC-->
+    </div>
   }
 </div>
