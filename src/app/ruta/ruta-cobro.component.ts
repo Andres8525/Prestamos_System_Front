@@ -15,6 +15,8 @@ export class RutaCobroComponent implements OnInit {
   ruta: RutaCobro | null = null;
   montos: Record<number, number | null> = {};
   soloConCobro = false;
+  /** Orden por urgencia (cobro exigible, días de atraso y monto) calculado con una cola de prioridad en el servidor. */
+  priorizar = false;
   cargando = false;
   error = '';
   mensaje = '';
@@ -46,7 +48,10 @@ export class RutaCobroComponent implements OnInit {
   cargarRuta(): void {
     if (!this.cobradorId) return;
     this.cargando = true;
-    this.cobranzaService.obtenerRuta(this.cobradorId, this.fecha).subscribe({
+    const consulta = this.priorizar
+      ? this.cobranzaService.obtenerRutaPriorizada(this.cobradorId, this.fecha)
+      : this.cobranzaService.obtenerRuta(this.cobradorId, this.fecha);
+    consulta.subscribe({
       next: (r) => {
         this.ruta = r;
         this.montos = {};

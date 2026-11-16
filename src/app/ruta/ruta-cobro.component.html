@@ -9,6 +9,9 @@
       </select>
       <input class="filtro" type="date" [(ngModel)]="fecha" name="fecha" (ngModelChange)="cargarRuta()" />
       <label class="filtro"><input type="checkbox" [(ngModel)]="soloConCobro" name="solo" /> Solo con cobro hoy</label>
+      <label class="filtro" title="Ordena primero lo exigible hoy, luego más días de atraso y mayor monto">
+        <input type="checkbox" [(ngModel)]="priorizar" name="priorizar" (ngModelChange)="cargarRuta()" /> Priorizar por urgencia
+      </label>
     </div>
   </div>
 
