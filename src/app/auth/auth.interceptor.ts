@@ -4,18 +4,20 @@ import { TimeoutError, catchError, throwError, timeout } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AuthService } from '../services/auth.service';
 
+/** Tiempo máximo de espera de la API (el servidor de Render Free tarda hasta ~1 minuto en despertar). */
+export const ESPERA_MAXIMA_MS = 75000;
+
+/** Rutas que no requieren sesión: no se les envía token ni cierran la sesión si responden 401. */
+const RUTAS_PUBLICAS = /\/(auth\/(login|register|verificar-email)|health)$/;
+
 /**
  * Agrega el token a las peticiones dirigidas a la API (nunca a otros dominios),
  * corta las que tardan demasiado y cierra la sesión cuando el servidor responde 401.
  */
-
-/** Tiempo máximo de espera de la API (el servidor de Render Free tarda hasta ~1 minuto en despertar). */
-export const ESPERA_MAXIMA_MS = 75000;
-
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const esApi = req.url.startsWith(environment.apiUrl);
-  const esPublica = /\/auth\/(login|register)$/.test(req.url);
+  const esPublica = RUTAS_PUBLICAS.test(req.url);
   const token = auth.token;
 
   const peticion = esApi && token && !esPublica
