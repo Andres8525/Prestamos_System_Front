@@ -7,7 +7,13 @@
   </a>
 
   <main class="acceso-tarjeta">
-    <div class="acceso-sello">Cuenta <b>CrediRuta</b></div>
+    <div class="acceso-cabecera">
+      <div class="acceso-sello">Cuenta <b>CrediRuta</b></div>
+      <button type="button" class="estado-servidor" [ngClass]="estadoServidor" (click)="reintentarConexion()"
+              [title]="estadoServidor === 'sin-conexion' ? 'Reintentar la conexión' : textoServidor" aria-live="polite">
+        <i></i>{{ textoServidor }}
+      </button>
+    </div>
 
     @if (servidorDisponible === false) {
       <div class="acceso-mensaje aviso" role="status">

@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { EstadoServidor, ServidorService } from '../services/servidor.service';
 import { NotificacionService } from '../services/notificacion.service';
 import { mensajeError } from '../services/cobranza.service';
 import { environment } from '../environments/environment';
@@ -37,6 +38,8 @@ export class AccesoComponent implements OnInit, OnDestroy {
   aviso = '';
   /** Estado de la conexión con el servidor: null = comprobando. */
   servidorDisponible: boolean | null = null;
+  /** Estado detallado para el indicador del login. */
+  estadoServidor: EstadoServidor = 'comprobando';
   mostrarDemo = !environment.production;
 
   private volver = '/dashboard';
@@ -45,6 +48,7 @@ export class AccesoComponent implements OnInit, OnDestroy {
 
   constructor(
     private auth: AuthService,
+    private servidor: ServidorService,
     private router: Router,
     private route: ActivatedRoute,
     private notificaciones: NotificacionService
@@ -60,8 +64,10 @@ export class AccesoComponent implements OnInit, OnDestroy {
     const destino = params.get('volver');
     if (destino && destino.startsWith('/') && !destino.startsWith('//')) this.volver = destino;
 
-    // Se "despierta" el servidor mientras el usuario escribe su email.
-    this.subs.add(this.auth.despertarServidor().subscribe((ok) => (this.servidorDisponible = ok)));
+    // Se "despierta" el servidor mientras el usuario escribe su email (normalmente ya está en línea
+    // porque la app lo mantiene activo) y se muestra su estado en el indicador.
+    this.subs.add(this.servidor.estado$.subscribe((e) => (this.estadoServidor = e)));
+    this.subs.add(this.servidor.despertar().subscribe((ok) => (this.servidorDisponible = ok)));
   }
 
   ngOnDestroy(): void {
@@ -177,6 +183,19 @@ export class AccesoComponent implements OnInit, OnDestroy {
   }
 
   // ---------------------------------------------------------------- utilidades
+
+  get textoServidor(): string {
+    switch (this.estadoServidor) {
+      case 'en-linea': return 'Servidor en línea';
+      case 'despertando': return 'Despertando el servidor…';
+      case 'sin-conexion': return 'Sin conexión con el servidor';
+      default: return 'Conectando…';
+    }
+  }
+
+  reintentarConexion(): void {
+    this.servidor.despertar().subscribe((ok) => (this.servidorDisponible = ok));
+  }
 
   private irA(paso: PasoAcceso): void {
     this.paso = paso;
