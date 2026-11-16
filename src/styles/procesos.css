@@ -1,0 +1,37 @@
+/* ── Procesos en segundo plano: workers del servidor y Web Workers ── */
+.procesos-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.procesos-prioridad { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--texto-suave); }
+.procesos-prioridad input { width: 140px; }
+
+.tipos-tarea { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.tipo-tarea {
+  display: grid; gap: 6px; text-align: left; padding: 14px 16px; cursor: pointer;
+  border: 1px solid var(--borde); border-radius: 12px; background: var(--superficie-2);
+  color: var(--texto); font: inherit; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.tipo-tarea:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--primario); box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.35); }
+.tipo-tarea:disabled { opacity: 0.55; cursor: not-allowed; }
+.tipo-tarea strong { font-size: 14px; }
+.tipo-tarea span { font-size: 12px; color: var(--texto-suave); line-height: 1.4; }
+.tipo-tarea em { font-size: 12px; color: var(--primario); }
+
+.tarea-estado { text-transform: lowercase; }
+.tarea-estado::first-letter { text-transform: uppercase; }
+.tarea-pendiente { background: rgba(148, 163, 184, 0.18); color: #475569; }
+.tarea-en-proceso { background: rgba(59, 130, 246, 0.16); color: #1d4ed8; animation: parpadeo-tarea 1.2s ease-in-out infinite; }
+.tarea-completada { background: rgba(34, 197, 94, 0.16); color: #15803d; }
+.tarea-fallida { background: rgba(239, 68, 68, 0.14); color: #b91c1c; }
+.tarea-cancelada { background: rgba(148, 163, 184, 0.14); color: #64748b; text-decoration: line-through; }
+@keyframes parpadeo-tarea { 50% { opacity: 0.55; } }
+.tarea-resumen { max-width: 320px; font-size: 12px; }
+td.acciones { white-space: nowrap; display: flex; gap: 6px; }
+.texto-suave { color: var(--texto-suave); }
+
+.proyeccion-avance { margin-top: 12px; }
+.histograma { display: flex; align-items: flex-end; gap: 3px; height: 120px; margin-top: 16px; padding: 4px 0; border-bottom: 1px solid var(--borde); }
+.histograma div {
+  flex: 1; min-height: 2px; border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, var(--primario), rgba(99, 102, 241, 0.35));
+  transition: height 0.4s ease;
+}
+@media (prefers-reduced-motion: reduce) { .tarea-en-proceso { animation: none; } }
