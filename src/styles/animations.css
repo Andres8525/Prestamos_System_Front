@@ -1,0 +1,81 @@
+/* ── Animaciones ────────────────────────────────────────── */
+@keyframes aparecer-arriba {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+@keyframes escalar-entrada {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes brillo {
+  from { background-position: -400px 0; }
+  to   { background-position: 400px 0; }
+}
+@keyframes flotar {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(24px, -32px) scale(1.08); }
+}
+@keyframes rebote {
+  0%, 100% { transform: scale(1); }
+  40%      { transform: scale(1.3); }
+}
+@keyframes girar { to { transform: rotate(360deg); } }
+@keyframes trazo { to { stroke-dashoffset: 0; } }
+@keyframes sacudir {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+/* Entrada de cada página */
+.list-container, .dashboard { animation: aparecer-arriba 0.45s var(--curva) both; }
+
+/* Entrada escalonada de tarjetas, KPIs y filas */
+.kpis > *, .stats-grid > *, .sections-grid > *, .productos-grid > * {
+  animation: aparecer-arriba 0.5s var(--curva) both;
+}
+.kpis > :nth-child(1), .stats-grid > :nth-child(1), .productos-grid > :nth-child(1) { animation-delay: 0.04s; }
+.kpis > :nth-child(2), .stats-grid > :nth-child(2), .productos-grid > :nth-child(2) { animation-delay: 0.08s; }
+.kpis > :nth-child(3), .stats-grid > :nth-child(3), .productos-grid > :nth-child(3) { animation-delay: 0.12s; }
+.kpis > :nth-child(4), .stats-grid > :nth-child(4), .productos-grid > :nth-child(4) { animation-delay: 0.16s; }
+.kpis > :nth-child(5), .stats-grid > :nth-child(5), .productos-grid > :nth-child(5) { animation-delay: 0.20s; }
+.kpis > :nth-child(6), .stats-grid > :nth-child(6), .productos-grid > :nth-child(6) { animation-delay: 0.24s; }
+.productos-grid > :nth-child(n + 7) { animation-delay: 0.28s; }
+
+.card { animation: escalar-entrada 0.4s var(--curva) both; }
+.alert { animation: aparecer-arriba 0.3s var(--curva) both; }
+.alert-error { animation: sacudir 0.5s both; }
+
+table tbody tr { animation: aparecer 0.35s ease both; }
+table tbody tr:nth-child(1) { animation-delay: 0.02s; }
+table tbody tr:nth-child(2) { animation-delay: 0.05s; }
+table tbody tr:nth-child(3) { animation-delay: 0.08s; }
+table tbody tr:nth-child(4) { animation-delay: 0.11s; }
+table tbody tr:nth-child(5) { animation-delay: 0.14s; }
+table tbody tr:nth-child(n + 6) { animation-delay: 0.17s; }
+
+/* Esqueleto de carga */
+.loading-text {
+  color: transparent; border-radius: var(--radio-lg); min-height: 160px; user-select: none;
+  background: linear-gradient(90deg, #e9edf5 25%, #f6f8fc 37%, #e9edf5 63%);
+  background-size: 800px 100%; animation: brillo 1.4s linear infinite;
+}
+
+.spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.45); border-top-color: #fff;
+  animation: girar 0.7s linear infinite;
+}
+
+.rebote { animation: rebote 0.4s var(--curva); }
+
+/* Accesibilidad: sin animaciones para quien las desactiva en su sistema */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
