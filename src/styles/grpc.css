@@ -1,0 +1,30 @@
+/* ── Panel gRPC ── */
+.grpc-patrones { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.grpc-patron {
+  display: grid; gap: 4px; padding: 14px; border-radius: 12px; text-align: center;
+  border: 1px solid var(--borde); background: var(--superficie-2);
+}
+.grpc-patron b { font-size: 20px; letter-spacing: 0.05em; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.grpc-patron span { font-size: 12px; color: var(--texto-suave); }
+
+.patron-unary { color: #1d4ed8; background: rgba(59, 130, 246, 0.12); }
+.patron-server_streaming { color: #047857; background: rgba(16, 185, 129, 0.12); }
+.patron-client_streaming { color: #b45309; background: rgba(245, 158, 11, 0.12); }
+.patron-bidi_streaming { color: #7c3aed; background: rgba(139, 92, 246, 0.12); }
+
+.grpc-servicio { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.grpc-infra { opacity: 0.85; }
+.grpc-error { color: #b91c1c; font-weight: 700; }
+
+.grpc-pestanas { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
+.grpc-pestanas [role='tab'] {
+  padding: 6px 12px; border-radius: 8px; border: 1px solid var(--borde); background: transparent;
+  font: inherit; font-size: 13px; color: var(--texto-suave); cursor: pointer;
+}
+.grpc-pestanas [role='tab'].activa { background: var(--primario); border-color: var(--primario); color: #fff; }
+.grpc-copiar { margin-left: auto; }
+.grpc-proto {
+  max-height: 460px; overflow: auto; margin: 0; padding: 16px; border-radius: 12px;
+  background: #0f172a; color: #e2e8f0; font-size: 12.5px; line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre;
+}
