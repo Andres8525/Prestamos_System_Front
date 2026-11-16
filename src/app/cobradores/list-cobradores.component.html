@@ -1,0 +1,83 @@
+<div class="list-container">
+  <div class="page-header">
+    <h1>Agentes Cobradores</h1>
+    <button class="btn btn-primary" (click)="toggleFormulario()">
+      {{ mostraFormulario ? 'Cancelar' : '+ Nuevo Cobrador' }}
+    </button>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (mostraFormulario) {
+    <div class="card">
+      <h2 class="form-title">{{ enEdicion ? 'Editar cobrador' : 'Registrar cobrador' }}</h2>
+      <form (ngSubmit)="guardar()" class="form-grid">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input id="nombre" name="nombre" [(ngModel)]="form.nombre" />
+        </div>
+        <div class="form-group">
+          <label for="documento">Documento</label>
+          <input id="documento" name="documento" [(ngModel)]="form.documento" />
+        </div>
+        <div class="form-group">
+          <label for="zona">Zona / Ruta</label>
+          <input id="zona" name="zona" [(ngModel)]="form.zona" placeholder="Ej. Ruta Norte" />
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" name="telefono" [(ngModel)]="form.telefono" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" [(ngModel)]="form.email" />
+        </div>
+        <div class="form-group">
+          <label for="base">Caja base diaria</label>
+          <input id="base" name="base" type="number" min="0" [(ngModel)]="form.cajaBase" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (cargando) {
+    <div class="loading-text">Cargando...</div>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th><th>Documento</th><th>Zona</th><th>Teléfono</th>
+            <th>Caja base</th><th>Clientes en ruta</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of cobradores; track c.id) {
+            <tr>
+              <td>{{ c.nombre }}</td>
+              <td>{{ c.documento }}</td>
+              <td>{{ c.zona }}</td>
+              <td>{{ c.telefono || '—' }}</td>
+              <td>{{ c.cajaBase | currency }}</td>
+              <td>{{ c.clientesAsignados }}</td>
+              <td><span class="badge" [ngClass]="c.activo ? 'estado-al_dia' : 'estado-atrasado'">{{ c.activo ? 'ACTIVO' : 'INACTIVO' }}</span></td>
+              <td class="actions-cell">
+                <button class="btn btn-primary btn-sm" (click)="editar(c)">Editar</button>
+                @if (c.activo) {
+                  <button class="btn btn-danger btn-sm" (click)="desactivar(c)">Desactivar</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="8" class="empty-state">No hay cobradores registrados</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
