@@ -1,0 +1,73 @@
+<div class="list-container">
+  <div class="page-header">
+    <h1>Ruta de Cobro</h1>
+    <div class="header-actions">
+      <select class="filtro" [(ngModel)]="cobradorId" name="cobrador" (ngModelChange)="cargarRuta()">
+        @for (c of cobradores; track c.id) {
+          <option [ngValue]="c.id">{{ c.nombre }} — {{ c.zona }}</option>
+        }
+      </select>
+      <input class="filtro" type="date" [(ngModel)]="fecha" name="fecha" (ngModelChange)="cargarRuta()" />
+      <label class="filtro"><input type="checkbox" [(ngModel)]="soloConCobro" name="solo" /> Solo con cobro hoy</label>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+  @if (mensaje) {
+    <div class="alert alert-success">{{ mensaje }}</div>
+  }
+
+  @if (ruta) {
+    <div class="kpis">
+      <div class="kpi"><span>Visitas</span><strong>{{ ruta.totalVisitas }}</strong></div>
+      <div class="kpi"><span>Con abono</span><strong>{{ ruta.visitasConAbono }}</strong></div>
+      <div class="kpi"><span>Por cobrar</span><strong>{{ ruta.totalExigible | currency }}</strong></div>
+      <div class="kpi positivo"><span>Recaudado</span><strong>{{ ruta.totalRecaudado | currency }}</strong></div>
+    </div>
+  }
+
+  @if (cargando) {
+    <div class="loading-text">Cargando ruta...</div>
+  } @else if (ruta) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Orden</th><th>Cliente</th><th>Dirección</th><th>Cuota</th><th>Exigible</th>
+            <th>Atraso</th><th>Saldo</th><th>Estado</th><th>Abonado hoy</th><th>Registrar abono</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of paradas; track p.prestamoId) {
+            <tr [class.row-atrasado]="p.estado === 'ATRASADO'">
+              <td>{{ p.orden }}</td>
+              <td>{{ p.clienteNombre }}<br /><small>{{ p.telefono }}</small></td>
+              <td><small>{{ p.direccion }}</small></td>
+              <td>{{ p.valorCuota | currency }} <small>{{ p.tipoLiquidacion | lowercase }}</small></td>
+              <td><strong>{{ p.montoExigible | currency }}</strong></td>
+              <td>{{ p.diasAtraso }} días<br /><small>{{ p.cuotasVencidas }} cuotas</small></td>
+              <td>{{ p.saldoPendiente | currency }}</td>
+              <td><span class="badge" [ngClass]="getEstadoClass(p.estado)">{{ p.estado }}</span></td>
+              <td>{{ p.abonadoHoy > 0 ? (p.abonadoHoy | currency) : '—' }}</td>
+              <td class="actions-cell">
+                @if (esHoy) {
+                  <input class="inline-input" type="number" min="0.01" step="0.01"
+                         [(ngModel)]="montos[p.prestamoId]" [name]="'m' + p.prestamoId" />
+                  <button class="btn btn-success btn-sm" (click)="registrarAbono(p)">Abonar</button>
+                } @else {
+                  <small>Solo para la jornada de hoy</small>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="10" class="empty-state">No hay préstamos activos en esta ruta</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (!cobradores.length) {
+    <div class="empty-state">Registre cobradores y asígneles clientes para generar rutas.</div>
+  }
+</div>
