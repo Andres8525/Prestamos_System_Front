@@ -1,6 +1,9 @@
 <div class="list-container">
   <div class="page-header">
-    <h1>Scoring de Riesgo (IA)</h1>
+    <div>
+      <h1>Scoring de riesgo</h1>
+      <p class="subtitulo">Probabilidad de incumplimiento de cada cliente según el modelo de Machine Learning</p>
+    </div>
     <button class="btn btn-primary" (click)="reentrenar()" [disabled]="entrenando">
       {{ entrenando ? 'Entrenando…' : 'Reentrenar modelo' }}
     </button>

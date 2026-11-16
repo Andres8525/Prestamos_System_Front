@@ -1,6 +1,9 @@
 <div class="list-container">
   <div class="page-header">
-    <h1>Ruta de Cobro</h1>
+    <div>
+      <h1>Ruta de cobro</h1>
+      <p class="subtitulo">Visitas del día con lo exigible por cliente y registro de abonos en la calle</p>
+    </div>
     <div class="header-actions">
       <select class="filtro" [(ngModel)]="cobradorId" name="cobrador" (ngModelChange)="cargarRuta()">
         @for (c of cobradores; track c.id) {
