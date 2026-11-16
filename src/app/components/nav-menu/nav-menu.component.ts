@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { MenuService, MenuItem } from '../../services/menu.service';
 import { CommonModule } from '@angular/common';
+import { MenuService, MenuSeccion } from '../../services/menu.service';
 import { MenuItemComponent } from '../menu-item/menu-item.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -12,18 +13,24 @@ import { MenuItemComponent } from '../menu-item/menu-item.component';
 })
 export class NavMenuComponent implements OnInit {
   @Output() collapsedChange = new EventEmitter<boolean>();
+  /** Se emite al elegir una opción (para cerrar el menú en móviles). */
+  @Output() navegar = new EventEmitter<void>();
 
-  menuItems: MenuItem[] = [];
+  secciones: MenuSeccion[] = [];
   isCollapsed = false;
 
-  constructor(private menuService: MenuService) {}
+  constructor(private menuService: MenuService, private auth: AuthService) {}
 
   ngOnInit(): void {
-    this.menuItems = this.menuService.obtenerMenuItems();
+    this.secciones = this.menuService.obtenerSecciones();
   }
 
   toggle(): void {
     this.isCollapsed = !this.isCollapsed;
     this.collapsedChange.emit(this.isCollapsed);
+  }
+
+  cerrarSesion(): void {
+    this.auth.cerrarSesion();
   }
 }
