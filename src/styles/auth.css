@@ -251,10 +251,10 @@
   color: var(--acceso-cta-texto);
   transition: background-color var(--rapido), transform var(--rapido), box-shadow var(--medio) var(--curva);
 }
-.btn-acceso:hover:not(:disabled) { background: var(--acceso-cta-hover); transform: translateY(-1px); box-shadow: 0 10px 26px -8px rgba(250, 204, 21, 0.6); }
+.btn-acceso:hover:not(:disabled) { background: var(--acceso-cta-hover); transform: translateY(-1px); box-shadow: 0 10px 26px -8px rgba(34, 197, 94, 0.6); }
 .btn-acceso:active:not(:disabled) { transform: scale(0.99); }
 .btn-acceso:disabled { opacity: 0.65; cursor: wait; }
-.btn-acceso .spinner { border-color: rgba(0, 0, 0, 0.25); border-top-color: #111; }
+.btn-acceso .spinner { border-color: rgba(5, 46, 22, 0.25); border-top-color: #052e16; }
 
 .enlace {
   border: none;
