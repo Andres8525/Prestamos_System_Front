@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription, debounceTime, switchMap } from 'rxjs';
 import { MlService } from '../services/ml.service';
+import { TiempoRealService } from '../services/tiempo-real.service';
 import { NotificacionService } from '../services/notificacion.service';
 import { mensajeError } from '../services/cobranza.service';
 import { Scoring } from '../models/cobranza.model';
@@ -34,7 +35,8 @@ export class MachineLearningComponent implements OnInit, OnDestroy {
   private cambios = new Subject<EntradaSimulacion>();
   private subs = new Subscription();
 
-  constructor(private ml: MlService, private notificaciones: NotificacionService) {}
+  constructor(private ml: MlService, private notificaciones: NotificacionService,
+              private tiempoReal: TiempoRealService) {}
 
   ngOnInit(): void {
     this.cargar();
@@ -45,6 +47,12 @@ export class MachineLearningComponent implements OnInit, OnDestroy {
         .subscribe({ next: (s) => (this.simulacion = s), error: () => (this.simulacion = null) })
     );
     this.simular();
+    this.subs.add(this.tiempoReal.de('MODELO_ENTRENADO').subscribe(() => {
+      if (!this.entrenando) {
+        this.cargar();
+        this.simular();
+      }
+    }));
   }
 
   ngOnDestroy(): void {
