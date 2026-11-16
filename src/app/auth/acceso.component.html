@@ -1,0 +1,141 @@
+<div class="acceso">
+  <app-acceso-fondo></app-acceso-fondo>
+
+  <a class="acceso-marca" routerLink="/login" aria-label="CrediRuta">
+    <img src="favicon.svg" alt="" />
+    <span>CREDIRUTA<small>MICROFINANZAS</small></span>
+  </a>
+
+  <main class="acceso-tarjeta">
+    <div class="acceso-sello">Cuenta <b>CrediRuta</b></div>
+
+    @if (servidorDisponible === false) {
+      <div class="acceso-mensaje aviso" role="status">
+        <span>⏳</span>
+        <span>El servidor está tardando en responder. Si estuvo inactivo puede demorar hasta un minuto; puedes intentarlo de todas formas.</span>
+      </div>
+    }
+    @if (aviso) {
+      <div class="acceso-mensaje info" role="status">{{ aviso }}</div>
+    }
+    @if (error) {
+      <div class="acceso-mensaje error" role="alert">{{ error }}</div>
+    }
+
+    @switch (paso) {
+      @case ('email') {
+        <section class="acceso-paso">
+          <h1>{{ modoRegistro ? 'Crea tu cuenta para continuar' : 'Ingresa tu email para continuar' }}</h1>
+          <p class="acceso-intro">
+            Inicia sesión en CrediRuta con tu cuenta. Si aún no tienes una, te pediremos crearla.
+          </p>
+          <form (ngSubmit)="continuar()" novalidate>
+            <div class="campo-flotante">
+              <input id="acceso-email" name="email" type="email" autocomplete="username" placeholder=" "
+                     [(ngModel)]="email" [class.invalido]="intentado && !emailValido" autofocus />
+              <label for="acceso-email">Email</label>
+            </div>
+            <button type="submit" class="btn-acceso" [disabled]="enviando">
+              @if (enviando) { <span class="spinner"></span> Verificando… } @else { Continuar }
+            </button>
+          </form>
+        </section>
+      }
+
+      @case ('clave') {
+        <section class="acceso-paso">
+          <h1>Ingresa tu contraseña</h1>
+          <p class="acceso-intro">Inicia sesión en CrediRuta con tu cuenta.</p>
+          <div class="acceso-email">
+            <span>{{ email }}</span>
+            <button type="button" class="enlace" (click)="cambiarEmail()">Cambiar</button>
+          </div>
+          <form (ngSubmit)="ingresar()" novalidate>
+            <!-- Campo de usuario oculto para que el gestor de contraseñas del navegador asocie la cuenta -->
+            <input type="email" name="usuario" autocomplete="username" [value]="email" hidden />
+            <div class="campo-flotante con-boton">
+              <input id="acceso-clave" name="password" [type]="verClave ? 'text' : 'password'" placeholder=" "
+                     autocomplete="current-password" [(ngModel)]="password" />
+              <label for="acceso-clave">Contraseña</label>
+              <button type="button" class="ver-clave" (click)="verClave = !verClave">{{ verClave ? 'Ocultar' : 'Mostrar' }}</button>
+            </div>
+            <button type="submit" class="btn-acceso" [disabled]="enviando">
+              @if (enviando) { <span class="spinner"></span> Ingresando… } @else { Iniciar sesión }
+            </button>
+          </form>
+        </section>
+      }
+
+      @case ('registro') {
+        <section class="acceso-paso">
+          <h1>Crea tu cuenta</h1>
+          <p class="acceso-intro">No encontramos una cuenta con este email. Completa tus datos para crearla.</p>
+          <div class="acceso-email">
+            <span>{{ email }}</span>
+            <button type="button" class="enlace" (click)="cambiarEmail()">Cambiar</button>
+          </div>
+          <form (ngSubmit)="registrar()" novalidate>
+            <input type="email" name="usuario" autocomplete="username" [value]="email" hidden />
+            <div class="campo-flotante">
+              <input id="acceso-nombre" name="nombre" autocomplete="name" maxlength="80" placeholder=" "
+                     [(ngModel)]="nombre" [class.invalido]="intentado && !nombre.trim()" />
+              <label for="acceso-nombre">Nombre completo</label>
+            </div>
+            <div>
+              <div class="campo-flotante con-boton">
+                <input id="acceso-nueva" name="password" [type]="verClave ? 'text' : 'password'" placeholder=" "
+                       autocomplete="new-password" maxlength="72" [(ngModel)]="password"
+                       [class.invalido]="intentado && !claveValida" />
+                <label for="acceso-nueva">Contraseña</label>
+                <button type="button" class="ver-clave" (click)="verClave = !verClave">{{ verClave ? 'Ocultar' : 'Mostrar' }}</button>
+              </div>
+              @if (password) {
+                <div class="fortaleza" [ngClass]="'fortaleza-' + fortaleza" style="margin-top:8px">
+                  <div class="fortaleza-barra"><div [style.width.%]="fortaleza * 25"></div></div>
+                  <small>Seguridad: <b>{{ etiquetaFortaleza }}</b>
+                    @if (!claveValida) { · mínimo 8 caracteres, con letras y números }
+                  </small>
+                </div>
+              }
+            </div>
+            <div>
+              <div class="campo-flotante">
+                <input id="acceso-confirmar" name="confirmar" [type]="verClave ? 'text' : 'password'" placeholder=" "
+                       autocomplete="new-password" [(ngModel)]="confirmar"
+                       [class.invalido]="(intentado || confirmar) && !clavesCoinciden" />
+                <label for="acceso-confirmar">Confirmar contraseña</label>
+              </div>
+              @if (confirmar && !clavesCoinciden) {
+                <p class="campo-ayuda">Las contraseñas no coinciden.</p>
+              }
+            </div>
+            <button type="submit" class="btn-acceso" [disabled]="enviando">
+              @if (enviando) { <span class="spinner"></span> Creando cuenta… } @else { Crear cuenta y continuar }
+            </button>
+          </form>
+        </section>
+      }
+    }
+
+    <p class="acceso-ayuda">¿Necesitas ayuda? <a class="enlace" href="mailto:soporte@crediruta.app">Contacta a soporte</a>.</p>
+
+    <div class="acceso-separador"></div>
+
+    <section class="acceso-pie">
+      <h2>CrediRuta reúne toda la gestión de tu cartera de microcréditos.</h2>
+      <p>Con una sola cuenta accedes a préstamos, rutas de cobro diario, cuadre de caja por cobrador y
+        al scoring de riesgo con Machine Learning.</p>
+      <div class="acceso-modulos" aria-label="Módulos de la plataforma">
+        <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Préstamos</span>
+        <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Rutas</span>
+        <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"/></svg>Caja</span>
+        <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>Scoring</span>
+        <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58s9.14-3.47 12.65 0L21 3v7.12z"/></svg>Machine Learning</span>
+      </div>
+    </section>
+
+    @if (mostrarDemo && paso !== 'registro') {
+      <p class="acceso-demo">Demo local: <b>admin&#64;cobro.com</b> / <b>Admin123*</b></p>
+    }
+  </main>
+</div>
