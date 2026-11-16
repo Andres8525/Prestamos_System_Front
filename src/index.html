@@ -13,6 +13,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <app-root></app-root>
+    <app-root>
+      <!-- Pantalla de carga: Angular la reemplaza al iniciar -->
+      <style>
+        .arranque { position: fixed; inset: 0; display: grid; place-items: center; background: #0b1120; font-family: Inter, system-ui, sans-serif; }
+        .arranque div { display: grid; justify-items: center; gap: 14px; color: #cbd5e1; font-size: 14px; }
+        .arranque img { width: 56px; height: 56px; animation: arranque-latir 1.4s ease-in-out infinite; }
+        .arranque i { width: 120px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, transparent, #22c55e, transparent); background-size: 200% 100%; animation: arranque-barra 1.2s linear infinite; }
+        @keyframes arranque-latir { 50% { transform: scale(0.92); opacity: 0.8; } }
+        @keyframes arranque-barra { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+      </style>
+      <div class="arranque" role="status" aria-label="Cargando CrediRuta">
+        <div><img src="favicon.svg" alt="" /><b>CrediRuta</b><i></i></div>
+      </div>
+    </app-root>
   </body>
 </html>
