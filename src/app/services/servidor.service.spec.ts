@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ServidorService } from './servidor.service';
+import { INTERVALO_LATIDO_MS, REINTENTO_SIN_CONEXION_MS, ServidorService } from './servidor.service';
 import { environment } from '../environments/environment';
 
 describe('ServidorService (mantener el backend activo)', () => {
@@ -36,5 +37,25 @@ describe('ServidorService (mantener el backend activo)', () => {
     const peticiones = http.match(`${environment.apiUrl}/ping`);
     expect(peticiones.length).toBe(1);
     peticiones[0].flush({});
+  });
+
+  it('sin conexión reintenta pronto y en línea espera el intervalo normal', () => {
+    vi.useFakeTimers();
+    try {
+      servidor.iniciarLatido();
+      http.expectOne(`${environment.apiUrl}/ping`).error(new ProgressEvent('error'));
+      expect(servidor.estado).toBe('sin-conexion');
+
+      vi.advanceTimersByTime(REINTENTO_SIN_CONEXION_MS);
+      http.expectOne(`${environment.apiUrl}/ping`).flush({});
+      expect(servidor.estado).toBe('en-linea');
+
+      vi.advanceTimersByTime(REINTENTO_SIN_CONEXION_MS * 2);
+      http.expectNone(`${environment.apiUrl}/ping`);
+      vi.advanceTimersByTime(INTERVALO_LATIDO_MS);
+      http.expectOne(`${environment.apiUrl}/ping`).flush({});
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

@@ -11,6 +11,8 @@ export const INTERVALO_LATIDO_MS = environment.latidoServidorMs ?? 4 * 60 * 1000
 /** Si el primer ping tarda más que esto, el servidor se está despertando. */
 const UMBRAL_DESPERTANDO_MS = 3000;
 const ESPERA_DESPERTAR_MS = 70000;
+/** Sin conexión se reintenta seguido para que el aviso se quite solo en cuanto el servidor responda. */
+export const REINTENTO_SIN_CONEXION_MS = 15000;
 
 /**
  * Mantiene despierto el backend desde el navegador:
@@ -25,6 +27,7 @@ export class ServidorService implements OnDestroy {
   readonly estado$ = this.estadoSubject.asObservable();
   private latido?: Subscription;
   private enCurso?: Observable<boolean>;
+  private ultimoPing = 0;
 
   constructor(private http: HttpClient, private zone: NgZone) {}
 
@@ -38,6 +41,7 @@ export class ServidorService implements OnDestroy {
    */
   despertar(esperaMs = ESPERA_DESPERTAR_MS): Observable<boolean> {
     if (this.enCurso) return this.enCurso;
+    this.ultimoPing = Date.now();
     if (this.estado !== 'en-linea') this.estadoSubject.next('comprobando');
     const aviso = timer(UMBRAL_DESPERTANDO_MS).subscribe(() => {
       if (this.estado === 'comprobando') this.estadoSubject.next('despertando');
@@ -59,13 +63,18 @@ export class ServidorService implements OnDestroy {
     return this.enCurso;
   }
 
-  /** Inicia el ping periódico (idempotente). Corre fuera de Angular para no redibujar la vista cada vez. */
+  /**
+   * Inicia el ping periódico (idempotente). En línea llama cada INTERVALO_LATIDO_MS;
+   * sin conexión reintenta cada REINTENTO_SIN_CONEXION_MS. Corre fuera de Angular.
+   */
   iniciarLatido(): void {
     if (this.latido) return;
     this.despertar().subscribe();
     this.zone.runOutsideAngular(() => {
-      this.latido = interval(INTERVALO_LATIDO_MS).subscribe(() => {
-        if (typeof document === 'undefined' || document.visibilityState === 'visible') {
+      this.latido = interval(REINTENTO_SIN_CONEXION_MS).subscribe(() => {
+        const visible = typeof document === 'undefined' || document.visibilityState === 'visible';
+        const vencido = Date.now() - this.ultimoPing >= INTERVALO_LATIDO_MS;
+        if (visible && (this.estado === 'sin-conexion' || vencido)) {
           this.despertar().subscribe((ok) => this.zone.run(() => ok));
         }
       });
