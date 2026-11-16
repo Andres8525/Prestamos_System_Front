@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, forkJoin } from 'rxjs';
 import { PrestamoService } from '../services/prestamo.service';
 import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { Prestamo } from '../models/prestamo.model';
@@ -30,7 +30,7 @@ interface Segmento {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   prestamos: Prestamo[] = [];
   abonosHoy: Abono[] = [];
   segmentos: Segmento[] = [];
@@ -46,6 +46,7 @@ export class DashboardComponent implements OnInit {
   clientesActivos = 0;
 
   plataforma: EstadoPlataforma = { servidor: 'comprobando', workers: null, grpc: null, asistente: null };
+  private subs = new Subscription();
 
   constructor(
     private prestamoService: PrestamoService,
@@ -61,9 +62,13 @@ export class DashboardComponent implements OnInit {
     this.cargarPlataforma();
   }
 
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
   /** Servidor, workers, gRPC y asistente: cada consulta es independiente y un fallo no afecta a las demás. */
   cargarPlataforma(): void {
-    this.servidor.estado$.subscribe((e) => (this.plataforma.servidor = e));
+    this.subs.add(this.servidor.estado$.subscribe((e) => (this.plataforma.servidor = e)));
     this.workers.estado().subscribe({
       next: (p) => (this.plataforma.workers = `${p.ocupados}/${p.hilos} hilos ocupados · ${p.enCola} en cola`),
       error: () => (this.plataforma.workers = 'no disponible')
