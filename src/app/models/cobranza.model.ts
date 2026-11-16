@@ -98,7 +98,10 @@ export interface ModeloScoring {
   exactitud: number;
   auc: number;
   entrenadoEn: string;
-  pesos: Record<string, number>;
+  /** Pesos de la regresión logística (null si el modelo elegido es el árbol de decisión). */
+  pesos: Record<string, number> | null;
+  /** Importancia relativa de cada variable (suma 1). */
+  importancia: Record<string, number>;
 }
 
 export interface Scoring {

@@ -3,6 +3,7 @@ import { forkJoin } from 'rxjs';
 import { ClienteService } from '../services/cliente.service';
 import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { ModeloScoring, Scoring } from '../models/cobranza.model';
+import { ETIQUETAS_VARIABLES } from '../models/ml.model';
 
 /** Panel de IA: riesgo de incumplimiento de toda la cartera y métricas del modelo. */
 @Component({
@@ -24,8 +25,13 @@ export class ScoringRiesgoComponent implements OnInit {
     this.cargar();
   }
 
-  get pesos(): [string, number][] {
-    return this.modelo ? Object.entries(this.modelo.pesos) : [];
+  /** Variables ordenadas por importancia en el modelo vigente. */
+  get importancia(): [string, number][] {
+    return this.modelo ? Object.entries(this.modelo.importancia ?? {}).sort((a, b) => b[1] - a[1]) : [];
+  }
+
+  etiqueta(variable: string): string {
+    return ETIQUETAS_VARIABLES[variable] ?? variable;
   }
 
   contar(nivel: string): number {
