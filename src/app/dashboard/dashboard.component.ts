@@ -4,6 +4,18 @@ import { PrestamoService } from '../services/prestamo.service';
 import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { Prestamo } from '../models/prestamo.model';
 import { Abono } from '../models/cobranza.model';
+import { EstadoServidor, ServidorService } from '../services/servidor.service';
+import { WorkersService } from '../services/workers.service';
+import { GrpcService } from '../services/grpc.service';
+import { AsistenteService } from '../services/asistente.service';
+
+/** Estado de los componentes de la plataforma para la tarjeta del panel. */
+interface EstadoPlataforma {
+  servidor: EstadoServidor;
+  workers: string | null;
+  grpc: string | null;
+  asistente: string | null;
+}
 
 interface Segmento {
   clave: string;
@@ -33,10 +45,37 @@ export class DashboardComponent implements OnInit {
   prestamosActivos = 0;
   clientesActivos = 0;
 
-  constructor(private prestamoService: PrestamoService, private cobranzaService: CobranzaService) {}
+  plataforma: EstadoPlataforma = { servidor: 'comprobando', workers: null, grpc: null, asistente: null };
+
+  constructor(
+    private prestamoService: PrestamoService,
+    private cobranzaService: CobranzaService,
+    private servidor: ServidorService,
+    private workers: WorkersService,
+    private grpc: GrpcService,
+    private asistente: AsistenteService
+  ) {}
 
   ngOnInit(): void {
     this.cargarDashboard();
+    this.cargarPlataforma();
+  }
+
+  /** Servidor, workers, gRPC y asistente: cada consulta es independiente y un fallo no afecta a las demás. */
+  cargarPlataforma(): void {
+    this.servidor.estado$.subscribe((e) => (this.plataforma.servidor = e));
+    this.workers.estado().subscribe({
+      next: (p) => (this.plataforma.workers = `${p.ocupados}/${p.hilos} hilos ocupados · ${p.enCola} en cola`),
+      error: () => (this.plataforma.workers = 'no disponible')
+    });
+    this.grpc.info().subscribe({
+      next: (i) => (this.plataforma.grpc = i.activo ? `activo en el puerto ${i.puerto}` : 'detenido'),
+      error: () => (this.plataforma.grpc = 'no disponible')
+    });
+    this.asistente.estado().subscribe({
+      next: (a) => (this.plataforma.asistente = a.configurado ? `Groq · ${a.modelo}` : 'modo local (sin GROQ_API_KEY)'),
+      error: () => (this.plataforma.asistente = 'no disponible')
+    });
   }
 
   cargarDashboard(): void {
