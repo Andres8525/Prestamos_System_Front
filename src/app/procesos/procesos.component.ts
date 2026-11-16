@@ -31,7 +31,6 @@ export class ProcesosComponent implements OnInit, OnDestroy {
   encolando: string | null = null;
   prioridad = 5;
 
-  // Proyección Monte Carlo (Web Worker)
   escenarios = 50000;
   recuperacion = 0.35;
   proyectando = false;
@@ -147,7 +146,6 @@ export class ProcesosComponent implements OnInit, OnDestroy {
     return 'tarea-' + t.estado.toLowerCase().replace('_', '-');
   }
 
-  // ---------------------------------------------------------------- proyección (Web Worker)
 
   proyectar(): void {
     this.errorProyeccion = '';

@@ -92,7 +92,6 @@ export class MachineLearningComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---------------------------------------------------------------- simulador
 
   simular(): void {
     this.cambios.next({ ...this.entrada, maxDiasAtraso: Math.max(this.entrada.maxDiasAtraso, this.entrada.promedioDiasAtraso) });
@@ -107,7 +106,6 @@ export class MachineLearningComponent implements OnInit, OnDestroy {
     return this.simulacion ? this.simulacion.nivelRiesgo.toLowerCase() : 'bajo';
   }
 
-  // ---------------------------------------------------------------- gráficos
 
   /** Variables ordenadas por importancia. */
   get importancia(): [string, number][] {

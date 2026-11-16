@@ -78,7 +78,6 @@ export class AccesoComponent implements OnInit, OnDestroy {
     return PATRON_EMAIL.test(this.email.trim());
   }
 
-  // ---------------------------------------------------------------- paso 1: email
 
   continuar(): void {
     this.intentado = true;
@@ -113,7 +112,6 @@ export class AccesoComponent implements OnInit, OnDestroy {
     this.irA('email');
   }
 
-  // ---------------------------------------------------------------- paso 2: contraseña
 
   ingresar(): void {
     this.error = '';
@@ -135,7 +133,6 @@ export class AccesoComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---------------------------------------------------------------- paso 2: crear cuenta
 
   /** Fortaleza de 1 a 4 según longitud y variedad de caracteres. */
   get fortaleza(): number {
@@ -182,7 +179,6 @@ export class AccesoComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---------------------------------------------------------------- utilidades
 
   get textoServidor(): string {
     switch (this.estadoServidor) {
