@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--borde);
   border-radius: 8px;
   padding: 8px 16px;
@@ -25,7 +25,7 @@
 
 .atrasados-card {
   border: 1px solid #fecdd3;
-  background: #fff;
+  background: var(--superficie);
 
   .atrasados-title {
     font-size: 14px;

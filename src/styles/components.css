@@ -114,7 +114,7 @@ table tbody tr:hover { background: var(--primario-suave); }
 table tbody td { padding: 13px 16px; color: var(--texto-medio); font-size: 13px; vertical-align: middle; }
 td small { color: var(--texto-suave); }
 .actions-cell { display: flex; gap: 6px; align-items: center; }
-.row-atrasado { background: #fff5f6; }
+.row-atrasado { background: var(--fila-atrasada, #fff5f6); }
 
 /* ── Formularios ────────────────────────────────────────── */
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
