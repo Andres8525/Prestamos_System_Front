@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { TiempoRealService } from '../services/tiempo-real.service';
 import { NotificacionService } from '../services/notificacion.service';
+import { TemaService } from '../services/tema.service';
 import { EstadoConexion, EventoTiempoReal } from '../models/tiempo-real.model';
 
 /** Los eventos más antiguos que esto vienen del historial al conectar: no se notifican. */
@@ -25,7 +26,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   private subs = new Subscription();
 
   constructor(public auth: AuthService, private tiempoReal: TiempoRealService,
-              private notificaciones: NotificacionService) {}
+              private notificaciones: NotificacionService, public temas: TemaService) {}
 
   ngOnInit(): void {
     this.subs.add(this.tiempoReal.estado$.subscribe((e) => (this.estadoTiempoReal = e)));

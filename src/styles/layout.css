@@ -94,3 +94,10 @@
 @keyframes parpadeo-vivo { 50% { opacity: 0.35; } }
 @media (max-width: 640px) { .en-vivo span { display: none; } .en-vivo { padding: 7px; } }
 @media (prefers-reduced-motion: reduce) { .en-vivo i { animation: none !important; } }
+
+.tema-boton {
+  width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--borde); background: var(--superficie); color: var(--texto-medio);
+  transition: transform var(--rapido), background var(--rapido);
+}
+.tema-boton:hover { background: var(--superficie-2); transform: rotate(-15deg); }
