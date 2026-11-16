@@ -1,0 +1,68 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <h1>Tienda</h1>
+      <p class="subtitulo">Productos al contado o financiados con crédito diario o semanal</p>
+    </div>
+    <div class="header-actions">
+      <div class="buscador">
+        <input type="search" placeholder="Buscar producto…" [(ngModel)]="busqueda" name="busqueda" aria-label="Buscar producto" />
+      </div>
+      <a routerLink="/tienda/carrito" class="btn btn-primary">
+        🛒 Carrito ({{ carrito.unidades }}) · {{ carrito.total | currency }}
+      </a>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (cargando) {
+    <div class="loading-text">Cargando catálogo...</div>
+  } @else {
+    <div class="chips">
+      <button class="chip" [class.activo]="!categoria" (click)="categoria = ''">Todos</button>
+      @for (c of categorias; track c) {
+        <button class="chip" [class.activo]="categoria === c" (click)="categoria = c">{{ emoji(c) }} {{ c }}</button>
+      }
+    </div>
+
+    <div class="productos-grid">
+      @for (p of filtrados; track p.id) {
+        <article class="producto">
+          <div class="producto-imagen" [ngClass]="clase(p.categoria)">
+            @if (p.imagenUrl) {
+              <img [src]="p.imagenUrl" [alt]="p.nombre" loading="lazy" />
+            } @else {
+              <span class="emoji">{{ emoji(p.categoria) }}</span>
+            }
+            @if (p.stock === 0) {
+              <span class="etiqueta-stock agotado">Agotado</span>
+            } @else if (p.stock <= 3) {
+              <span class="etiqueta-stock poco">¡Quedan {{ p.stock }}!</span>
+            } @else {
+              <span class="etiqueta-stock">{{ p.stock }} disponibles</span>
+            }
+          </div>
+          <div class="producto-cuerpo">
+            <span class="producto-categoria">{{ p.categoria }}</span>
+            <h3 class="producto-nombre">{{ p.nombre }}</h3>
+            <p class="producto-descripcion">{{ p.descripcion }}</p>
+            <div class="producto-pie">
+              <span class="producto-precio">{{ p.precio | currency }}
+                @if (carrito.cantidadDe(p.id) > 0) { <small>{{ carrito.cantidadDe(p.id) }} en el carrito</small> }
+              </span>
+              <button class="btn btn-success btn-sm" [class.rebote]="recienAgregado === p.id"
+                      [disabled]="disponible(p) <= 0" (click)="agregar(p)">
+                {{ disponible(p) <= 0 ? 'Sin stock' : '+ Agregar' }}
+              </button>
+            </div>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-state">No se encontraron productos</div>
+      }
+    </div>
+  }
+</div>
