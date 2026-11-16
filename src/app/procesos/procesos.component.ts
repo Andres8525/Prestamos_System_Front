@@ -54,7 +54,11 @@ export class ProcesosComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subs.add(this.tiempoReal.estado$.subscribe((e) => (this.enVivo = e === 'conectado')));
+    this.subs.add(this.tiempoReal.estado$.subscribe((e) => {
+      const antes = this.enVivo;
+      this.enVivo = e === 'conectado';
+      if (antes && !this.enVivo) this.cargar();
+    }));
     this.subs.add(this.tiempoReal.de('TAREA_ACTUALIZADA').pipe(debounceTime(150)).subscribe(() => this.cargar()));
     this.cargar();
   }
