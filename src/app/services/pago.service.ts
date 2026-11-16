@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Pago } from '../models/pago.model';
+import { CuotasCliente, Pago } from '../models/pago.model';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -30,6 +30,15 @@ export class PagoService {
 
   obtenerPagosRealizados(prestamoId: number): Observable<Pago[]> {
     return this.http.get<Pago[]>(`${this.apiUrl}/prestamo/${prestamoId}/realizados`);
+  }
+
+  /** Un registro por cliente con cuotas pendientes. */
+  obtenerResumenPorCliente(): Observable<CuotasCliente[]> {
+    return this.http.get<CuotasCliente[]>(`${this.apiUrl}/clientes`);
+  }
+
+  obtenerPendientesDeCliente(clienteId: number): Observable<Pago[]> {
+    return this.http.get<Pago[]>(`${this.apiUrl}/cliente/${clienteId}/pendientes`);
   }
 
   obtenerPagosAtrasados(): Observable<Pago[]> {

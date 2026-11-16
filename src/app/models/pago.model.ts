@@ -11,3 +11,15 @@ export interface Pago {
   estado: EstadoPago;
   numero: number;
 }
+
+/** Resumen de las cuotas pendientes de un cliente (GET /api/pagos/clientes). */
+export interface CuotasCliente {
+  clienteId: number;
+  clienteNombre: string;
+  cedula: string;
+  prestamos: number;
+  cuotasPendientes: number;
+  cuotasAtrasadas: number;
+  saldoPendiente: number;
+  proximaFecha: string;
+}
