@@ -194,3 +194,12 @@ td small { color: var(--texto-suave); }
   border: 1px dashed var(--borde-fuerte); border-radius: var(--radio); background: var(--superficie-2);
 }
 .estado-vacio::before { content: '✦'; font-size: 22px; color: var(--primario); opacity: 0.6; }
+
+/* Accesibilidad: foco visible solo con teclado, selección y barras de desplazamiento con la paleta */
+:focus-visible { outline: 2px solid var(--primario); outline-offset: 2px; border-radius: 4px; }
+button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }
+::selection { background: var(--primario-borde); color: var(--texto); }
+* { scrollbar-width: thin; scrollbar-color: var(--borde-fuerte) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--borde-fuerte); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-track { background: transparent; }
