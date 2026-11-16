@@ -1,0 +1,13 @@
+{
+  "name": "CrediRuta · Microcréditos y cobro diario",
+  "short_name": "CrediRuta",
+  "description": "Gestión de microcréditos, rutas de cobro diario, cuadre de caja y scoring de riesgo con IA.",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#4f46e5",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
