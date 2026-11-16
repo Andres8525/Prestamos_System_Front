@@ -32,9 +32,18 @@
         <strong>{{ seleccionado.clienteNombre }}</strong>
         <span>Prob. de incumplimiento: <b>{{ seleccionado.probabilidadDefault | percent: '1.0-1' }}</b></span>
         <span class="badge">{{ seleccionado.recomendacion }}</span>
+        <button class="btn btn-primary btn-sm" (click)="explicarConIa()" [disabled]="explicando">
+          @if (explicando) { <span class="spinner"></span> Analizando… } @else { Explicar con IA }
+        </button>
         <button class="btn btn-secondary btn-sm" (click)="seleccionado = null">Cerrar</button>
       </div>
       <p>{{ seleccionado.mensaje }}</p>
+      @if (explicacion; as x) {
+        <div class="explicacion-ia">{{ x.texto }}
+          <small>{{ x.origen === 'GROQ' ? 'Explicación generada por ' + x.modelo + ' (Groq) con datos anónimos' : 'Explicación local (Groq no configurado en el servidor)' }}</small>
+        </div>
+      }
+      @if (errorExplicacion) { <div class="alert alert-error" style="margin-top:10px">{{ errorExplicacion }}</div> }
       <ul class="factores">
         @for (f of seleccionado.factores; track f.variable) {
           <li>{{ f.descripcion }}: <b>{{ f.valor }}</b>

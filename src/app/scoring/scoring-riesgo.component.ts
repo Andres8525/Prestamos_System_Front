@@ -5,6 +5,8 @@ import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { ModeloScoring, Scoring } from '../models/cobranza.model';
 import { ETIQUETAS_VARIABLES, PrediccionHistorica } from '../models/ml.model';
 import { MlService } from '../services/ml.service';
+import { AsistenteService } from '../services/asistente.service';
+import { RespuestaAsistente } from '../models/asistente.model';
 
 /** Panel de IA: riesgo de incumplimiento de toda la cartera y métricas del modelo. */
 @Component({
@@ -24,14 +26,39 @@ export class ScoringRiesgoComponent implements OnInit {
   historial: PrediccionHistorica[] = [];
   readonly Math = Math;
 
+  /** Explicación en lenguaje natural del asistente de IA (Groq) para el cliente seleccionado. */
+  explicacion: RespuestaAsistente | null = null;
+  explicando = false;
+  errorExplicacion = '';
+
   constructor(
     private clienteService: ClienteService,
     private cobranzaService: CobranzaService,
-    private ml: MlService
+    private ml: MlService,
+    private asistente: AsistenteService
   ) {}
+
+  explicarConIa(): void {
+    if (!this.seleccionado) return;
+    const id = this.seleccionado.clienteId;
+    this.explicando = true;
+    this.errorExplicacion = '';
+    this.asistente.explicarCliente(id).subscribe({
+      next: (r) => {
+        if (this.seleccionado?.clienteId === id) this.explicacion = r;
+        this.explicando = false;
+      },
+      error: (err) => {
+        this.explicando = false;
+        this.errorExplicacion = mensajeError(err, 'El asistente no pudo explicar este resultado');
+      }
+    });
+  }
 
   verDetalle(r: Scoring): void {
     this.seleccionado = r;
+    this.explicacion = null;
+    this.errorExplicacion = '';
     this.historial = [];
     this.ml.prediccionesCliente(r.clienteId).subscribe({ next: (h) => (this.historial = [...h].reverse()) });
   }
