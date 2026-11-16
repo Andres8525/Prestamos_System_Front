@@ -7,7 +7,7 @@ import { environment } from '../environments/environment';
 export type EstadoServidor = 'comprobando' | 'despertando' | 'en-linea' | 'sin-conexion';
 
 /** Cada cuánto se llama al servidor mientras la app está abierta (Render lo suspende a los 15 min sin tráfico). */
-export const INTERVALO_LATIDO_MS = 4 * 60 * 1000;
+export const INTERVALO_LATIDO_MS = environment.latidoServidorMs ?? 4 * 60 * 1000;
 /** Si el primer ping tarda más que esto, el servidor se está despertando. */
 const UMBRAL_DESPERTANDO_MS = 3000;
 const ESPERA_DESPERTAR_MS = 70000;
