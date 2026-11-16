@@ -1,6 +1,7 @@
 <a
   [routerLink]="item.route"
   routerLinkActive="active"
+  [routerLinkActiveOptions]="{ exact: !!item.exacta }"
   class="menu-item"
   [class.collapsed]="collapsed"
   [title]="collapsed ? item.label : ''"

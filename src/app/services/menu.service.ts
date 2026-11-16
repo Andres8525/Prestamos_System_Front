@@ -4,6 +4,8 @@ export interface MenuItem {
   label: string;
   route: string;
   icon: string;
+  /** La opción solo se marca activa con la ruta exacta (evita que /tienda quede activa en /tienda/pedidos). */
+  exacta?: boolean;
 }
 
 export interface MenuSeccion {
@@ -39,6 +41,15 @@ export class MenuService {
     {
       titulo: 'Inteligencia',
       items: [{ label: 'Scoring IA', route: '/scoring', icon: 'ai' }]
+    },
+    {
+      titulo: 'Tienda',
+      items: [
+        { label: 'Catálogo', route: '/tienda', icon: 'store', exacta: true },
+        { label: 'Carrito', route: '/tienda/carrito', icon: 'cart' },
+        { label: 'Productos', route: '/tienda/productos', icon: 'box' },
+        { label: 'Pedidos', route: '/tienda/pedidos', icon: 'orders' }
+      ]
     }
   ];
 

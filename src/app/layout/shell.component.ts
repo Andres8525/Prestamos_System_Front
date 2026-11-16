@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { CarritoService } from '../services/carrito.service';
 
 /** Marco de la zona privada: menú lateral, barra superior con el usuario y contenido. */
 @Component({
@@ -13,7 +14,7 @@ export class ShellComponent {
   menuUsuario = false;
   fecha = new Date().toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService, public carrito: CarritoService) {}
 
   get saludo(): string {
     const hora = new Date().getHours();

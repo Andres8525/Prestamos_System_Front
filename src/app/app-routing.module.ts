@@ -11,6 +11,10 @@ import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
 import { LoginComponent } from './auth/login.component';
 import { RegisterComponent } from './auth/register.component';
 import { ShellComponent } from './layout/shell.component';
+import { CatalogoComponent } from './tienda/catalogo.component';
+import { CarritoComponent } from './tienda/carrito.component';
+import { ProductosAdminComponent } from './tienda/productos-admin.component';
+import { PedidosComponent } from './tienda/pedidos.component';
 import { authGuard, invitadoGuard } from './auth/auth.guard';
 
 const routes: Routes = [
@@ -32,7 +36,11 @@ const routes: Routes = [
       { path: 'cobradores', component: ListCobradoresComponent, title: 'Cobradores · CrediRuta' },
       { path: 'ruta', component: RutaCobroComponent, title: 'Ruta de cobro · CrediRuta' },
       { path: 'caja', component: CuadreCajaComponent, title: 'Cuadre de caja · CrediRuta' },
-      { path: 'scoring', component: ScoringRiesgoComponent, title: 'Scoring IA · CrediRuta' }
+      { path: 'scoring', component: ScoringRiesgoComponent, title: 'Scoring IA · CrediRuta' },
+      { path: 'tienda', component: CatalogoComponent, title: 'Tienda · CrediRuta' },
+      { path: 'tienda/carrito', component: CarritoComponent, title: 'Carrito · CrediRuta' },
+      { path: 'tienda/productos', component: ProductosAdminComponent, title: 'Productos · CrediRuta' },
+      { path: 'tienda/pedidos', component: PedidosComponent, title: 'Pedidos · CrediRuta' }
     ]
   },
   { path: '**', redirectTo: '' }

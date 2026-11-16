@@ -16,6 +16,10 @@ import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
 import { LoginComponent } from './auth/login.component';
 import { RegisterComponent } from './auth/register.component';
 import { ShellComponent } from './layout/shell.component';
+import { CatalogoComponent } from './tienda/catalogo.component';
+import { CarritoComponent } from './tienda/carrito.component';
+import { ProductosAdminComponent } from './tienda/productos-admin.component';
+import { PedidosComponent } from './tienda/pedidos.component';
 import { authInterceptor } from './auth/auth.interceptor';
 
 // Standalone components
@@ -36,7 +40,11 @@ import { AuthMarcaComponent } from './auth/auth-marca.component';
     ListCobradoresComponent,
     RutaCobroComponent,
     CuadreCajaComponent,
-    ScoringRiesgoComponent
+    ScoringRiesgoComponent,
+    CatalogoComponent,
+    CarritoComponent,
+    ProductosAdminComponent,
+    PedidosComponent
   ],
   imports: [
     BrowserModule,
