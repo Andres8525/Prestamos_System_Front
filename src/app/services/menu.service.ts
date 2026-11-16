@@ -44,6 +44,12 @@ export class MenuService {
         { label: 'Scoring IA', route: '/scoring', icon: 'ai' },
         { label: 'Machine Learning', route: '/ml', icon: 'ml' }
       ]
+    },
+    {
+      titulo: 'Plataforma',
+      items: [
+        { label: 'Procesos', route: '/procesos', icon: 'workers' }
+      ]
     }
   ];
 
