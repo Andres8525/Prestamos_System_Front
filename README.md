@@ -48,6 +48,17 @@ Los cálculos pesados corren en otro hilo para no congelar la interfaz (`src/app
 `WebWorkerService` crea el worker, reenvía el avance y lo termina al acabar; si el navegador no soporta workers
 usa la misma función pura en el hilo principal. La configuración está en `tsconfig.worker.json`.
 
+## Presentación
+
+- **Tema claro, oscuro o automático** (botón en la barra superior, se recuerda en el navegador). Todos los colores
+  salen de los tokens de `src/styles/tokens.css`.
+- Pantalla de carga con la marca mientras descarga la app, esqueletos de carga en tablas y panel, transición
+  al cambiar de página y estados vacíos.
+- Tablas con cabecera fija y cifras alineadas; barra superior compacta en teléfonos; estilos de impresión.
+- Accesibilidad: foco visible con teclado, `aria-live` en avisos e indicadores y respeto de
+  `prefers-reduced-motion`.
+- Instalable como app (`manifest.webmanifest`).
+
 ## Desarrollo
 
 Requiere Node 22.
