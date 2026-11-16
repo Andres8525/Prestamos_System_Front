@@ -106,5 +106,19 @@
         </svg>
       </div>
     </div>
+
+    <div class="card ml-seccion">
+      <h2 class="form-title">Importancia de las variables</h2>
+      <p class="ml-nota">Qué comportamientos de pago pesan más en las predicciones de {{ r.modelo.algoritmo }}.</p>
+      <div class="barras">
+        @for (v of importancia; track v[0]) {
+          <div class="barra-fila">
+            <span>{{ etiqueta(v[0]) }}</span>
+            <div class="barra"><div [style.width.%]="v[1] * 100"></div></div>
+            <b>{{ v[1] | percent: '1.0-1' }}</b>
+          </div>
+        }
+      </div>
+    </div>
   }
 </div>
