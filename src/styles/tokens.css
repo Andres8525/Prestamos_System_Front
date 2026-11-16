@@ -5,6 +5,7 @@
   --primario-oscuro: #4338ca;
   --primario-suave: #eef2ff;
   --primario-borde: #c7d2fe;
+  --primario-texto: #4338ca;
   --acento: #10b981;
   --acento-oscuro: #059669;
   --acento-suave: #d1fae5;
@@ -76,6 +77,7 @@
     --texto-tenue: #64748b;
     --primario-suave: rgba(99, 102, 241, 0.16);
     --primario-borde: rgba(99, 102, 241, 0.35);
+    --primario-texto: #a5b4fc;
     --exito-suave: rgba(16, 185, 129, 0.16);
     --exito-texto: #6ee7b7;
     --alerta-suave: rgba(245, 158, 11, 0.16);
@@ -102,6 +104,7 @@
   --texto-tenue: #64748b;
   --primario-suave: rgba(99, 102, 241, 0.16);
   --primario-borde: rgba(99, 102, 241, 0.35);
+  --primario-texto: #a5b4fc;
   --exito-suave: rgba(16, 185, 129, 0.16);
   --exito-texto: #6ee7b7;
   --alerta-suave: rgba(245, 158, 11, 0.16);

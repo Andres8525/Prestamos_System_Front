@@ -90,7 +90,7 @@ app-root { display: block; height: 100%; }
 .estado-al_dia    { background: var(--exito-suave); color: var(--exito-texto); }
 .estado-pendiente { background: var(--alerta-suave); color: var(--alerta-texto); }
 .estado-atrasado  { background: var(--peligro-suave); color: var(--peligro-texto); }
-.estado-pagado    { background: var(--primario-suave); color: var(--primario-oscuro); }
+.estado-pagado    { background: var(--primario-suave); color: var(--primario-texto); }
 .estado-realizado { background: var(--exito-suave); color: var(--exito-texto); }
 
 .riesgo-bajo  { background: var(--exito-suave); color: var(--exito-texto); border-color: #a7f3d0; }
