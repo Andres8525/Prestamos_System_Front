@@ -94,8 +94,13 @@ export function mensajeError(err: any, fallback: string): string {
     return 'No se pudo conectar con el servidor. Si acaba de desplegarse o estuvo inactivo, '
       + 'puede tardar hasta un minuto en responder: inténtalo de nuevo.';
   }
-  if (err?.status >= 500) return 'El servidor tuvo un problema al procesar la solicitud. Inténtalo de nuevo.';
   const e = err?.error;
+  if (err?.status >= 500) {
+    const motivo = typeof e?.error === 'string' ? e.error : '';
+    return motivo && motivo !== 'Error interno del servidor'
+      ? motivo
+      : 'El servidor tuvo un problema al procesar la solicitud. Inténtalo de nuevo.';
+  }
   if (!e) return fallback;
   if (typeof e === 'string') return e;
   if (e.error) return e.error;

@@ -44,6 +44,14 @@ describe('mensajeError', () => {
       .toBe('Email o contraseña incorrectos');
     expect(mensajeError({ status: 400, error: { password: 'muy corta' } }, 'x')).toBe('password: muy corta');
   });
+
+  it('en errores 5xx muestra el motivo del servidor, salvo el error interno genérico', () => {
+    expect(mensajeError({ status: 503, error: { error: 'Groq no está disponible en este momento' } }, 'x'))
+      .toBe('Groq no está disponible en este momento');
+    expect(mensajeError({ status: 500, error: { error: 'Error interno del servidor' } }, 'x'))
+      .toContain('El servidor tuvo un problema');
+    expect(mensajeError({ status: 502, error: '<html>Bad Gateway</html>' }, 'x')).toContain('El servidor tuvo un problema');
+  });
 });
 
 describe('sinMarcasMarkdown', () => {
