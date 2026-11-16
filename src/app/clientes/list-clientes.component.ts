@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, Subscription, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 import { ClienteService } from '../services/cliente.service';
 import { Cliente } from '../models/cliente.model';
 import { Cobrador } from '../models/cobranza.model';
@@ -11,9 +12,14 @@ import { WebWorkerService, descargarArchivo } from '../services/web-worker.servi
   templateUrl: './list-clientes.component.html',
   styleUrls: ['./list-clientes.component.css']
 })
-export class ListClientesComponent implements OnInit {
+export class ListClientesComponent implements OnInit, OnDestroy {
   clientes: Cliente[] = [];
   exportando = false;
+  busqueda = '';
+  /** Resultado del buscador; null = sin búsqueda activa (se muestran todos). */
+  encontrados: Cliente[] | null = null;
+  private textoBusqueda = new Subject<string>();
+  private subBusqueda?: Subscription;
   cobradores: Cobrador[] = [];
   nuevoCliente: Cliente = { cedula: '', nombre: '', direccion: '', telefono: '' };
   mostraFormulario = false;
@@ -41,7 +47,28 @@ export class ListClientesComponent implements OnInit {
     });
   }
 
+  get clientesVisibles(): Cliente[] {
+    return this.encontrados ?? this.clientes;
+  }
+
+  buscar(texto: string): void {
+    this.textoBusqueda.next(texto.trim());
+  }
+
+  limpiarBusqueda(): void {
+    this.busqueda = '';
+    this.buscar('');
+  }
+
+  ngOnDestroy(): void {
+    this.subBusqueda?.unsubscribe();
+  }
+
   ngOnInit(): void {
+    this.subBusqueda = this.textoBusqueda
+      .pipe(debounceTime(250), distinctUntilChanged(),
+            switchMap((t) => (t ? this.clienteService.buscar(t) : of(null))))
+      .subscribe({ next: (r) => (this.encontrados = r), error: () => (this.encontrados = null) });
     this.cargarClientes();
     this.cobranzaService.obtenerCobradores(true).subscribe({ next: (d) => (this.cobradores = d) });
   }
