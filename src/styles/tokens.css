@@ -1,0 +1,63 @@
+/* ── Tokens de diseño: paleta, tipografía, radios y sombras ───────────── */
+:root {
+  /* Marca */
+  --primario: #4f46e5;
+  --primario-oscuro: #4338ca;
+  --primario-suave: #eef2ff;
+  --primario-borde: #c7d2fe;
+  --acento: #10b981;
+  --acento-oscuro: #059669;
+  --acento-suave: #d1fae5;
+
+  /* Semánticos */
+  --exito: #10b981;
+  --exito-suave: #d1fae5;
+  --exito-texto: #047857;
+  --alerta: #f59e0b;
+  --alerta-suave: #fef3c7;
+  --alerta-texto: #b45309;
+  --peligro: #e11d48;
+  --peligro-oscuro: #be123c;
+  --peligro-suave: #ffe4e6;
+  --peligro-texto: #be123c;
+  --info: #0ea5e9;
+  --info-suave: #e0f2fe;
+  --info-texto: #0369a1;
+
+  /* Neutros */
+  --fondo: #f4f6fb;
+  --superficie: #ffffff;
+  --superficie-2: #f8fafc;
+  --borde: #e5e9f2;
+  --borde-fuerte: #cbd5e1;
+  --texto: #0f172a;
+  --texto-medio: #334155;
+  --texto-suave: #64748b;
+  --texto-tenue: #94a3b8;
+
+  /* Barra lateral */
+  --lateral-1: #0f172a;
+  --lateral-2: #1e1b4b;
+  --lateral-texto: #a5b4cf;
+  --lateral-hover: rgba(255, 255, 255, 0.07);
+
+  /* Gradientes */
+  --gradiente-marca: linear-gradient(135deg, #6366f1 0%, #4f46e5 45%, #10b981 130%);
+  --gradiente-lateral: linear-gradient(180deg, var(--lateral-1) 0%, var(--lateral-2) 100%);
+
+  /* Forma y profundidad */
+  --radio-sm: 8px;
+  --radio: 12px;
+  --radio-lg: 18px;
+  --sombra-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --sombra: 0 1px 3px rgba(15, 23, 42, 0.07), 0 6px 16px -6px rgba(15, 23, 42, 0.08);
+  --sombra-lg: 0 12px 32px -8px rgba(15, 23, 42, 0.18), 0 4px 10px -4px rgba(15, 23, 42, 0.08);
+  --sombra-primario: 0 8px 20px -6px rgba(79, 70, 229, 0.45);
+
+  /* Movimiento */
+  --curva: cubic-bezier(0.22, 1, 0.36, 1);
+  --rapido: 0.15s;
+  --medio: 0.3s;
+
+  --fuente: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
