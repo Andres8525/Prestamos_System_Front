@@ -108,7 +108,7 @@ table thead th {
   padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700;
   color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;
 }
-table tbody tr { border-bottom: 1px solid #eef1f7; transition: background-color var(--rapido); }
+table tbody tr { border-bottom: 1px solid var(--borde); transition: background-color var(--rapido); }
 table tbody tr:last-child { border-bottom: none; }
 table tbody tr:hover { background: var(--primario-suave); }
 table tbody td { padding: 13px 16px; color: var(--texto-medio); font-size: 13px; vertical-align: middle; }
@@ -203,3 +203,8 @@ button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--borde-fuerte); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
 ::-webkit-scrollbar-track { background: transparent; }
+
+/* Tablas: cabecera fija al desplazar, cifras alineadas y desplazamiento horizontal suave en móvil */
+.table-wrapper { max-height: 70vh; overflow: auto; -webkit-overflow-scrolling: touch; }
+table thead th { position: sticky; top: 0; z-index: 1; background: var(--superficie-2); }
+table tbody td { font-variant-numeric: tabular-nums; }
