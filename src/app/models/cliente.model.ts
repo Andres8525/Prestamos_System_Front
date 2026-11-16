@@ -4,4 +4,8 @@ export interface Cliente {
   nombre: string;
   direccion: string;
   telefono: string;
+  cobradorId?: number | null;
+  cobradorNombre?: string;
+  zona?: string;
+  ordenRuta?: number | null;
 }
