@@ -17,10 +17,24 @@ Consume la API del repositorio `Prestamos_System_Back`.
   backend (`/api/asistente`): la clave de Groq **no** se configura en el frontend.
 - **Procesos:** cola de tareas del backend (workers con prioridad, reintentos y resultados descargables) y
   proyección Monte Carlo del recaudo en un **Web Worker** del navegador.
+- **Búsqueda y priorización:** buscador de clientes con autocompletado (índice Trie en el servidor),
+  ruta ordenada por urgencia (cola de prioridad) y antigüedad de la cartera por tramos de mora.
 - **Servicios gRPC:** servicios, patrón de cada método (unario, streaming de servidor/cliente, bidireccional),
   métricas de uso y visor de los contratos `.proto`.
 - **Servidor siempre activo:** al abrir la app se despierta el backend y, con la pestaña visible, se le hace ping
   cada 4 minutos (`latidoServidorMs`); el login muestra el estado (en línea / despertando / sin conexión).
+
+## Tiempo real (WebSocket)
+
+`TiempoRealService` abre `wss://…/ws/eventos?token=…` al entrar a la zona privada y lo cierra al salir.
+
+- Reconexión automática con espera exponencial (1 s → 30 s); al reconectar envía `desde=<último id>` y recibe
+  los eventos que se perdió.
+- Ping cada 20 s; el indicador **En vivo** de la barra superior muestra el estado y los usuarios conectados.
+- Qué se actualiza solo: feed de **Actividad en vivo** y cifras del panel, ruta del día del cobrador seleccionado,
+  cola de **Procesos** (sin consultas periódicas mientras hay conexión) y métricas de **Machine Learning**.
+- Avisos emergentes (máximo 4 a la vez, sin duplicados) para abonos, préstamos, cierres de caja y procesos.
+- La URL está en `wsUrl` de `environment*.ts`.
 
 ## Web Workers
 
