@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, forkJoin } from 'rxjs';
+import { Subscription, debounceTime, forkJoin } from 'rxjs';
 import { PrestamoService } from '../services/prestamo.service';
 import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { Prestamo } from '../models/prestamo.model';
@@ -8,6 +8,8 @@ import { EstadoServidor, ServidorService } from '../services/servidor.service';
 import { WorkersService } from '../services/workers.service';
 import { GrpcService } from '../services/grpc.service';
 import { AsistenteService } from '../services/asistente.service';
+import { TiempoRealService } from '../services/tiempo-real.service';
+import { EventoTiempoReal, PRESENTACION_EVENTOS } from '../models/tiempo-real.model';
 
 /** Estado de los componentes de la plataforma para la tarjeta del panel. */
 interface EstadoPlataforma {
@@ -47,6 +49,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   plataforma: EstadoPlataforma = { servidor: 'comprobando', workers: null, grpc: null, asistente: null };
   private subs = new Subscription();
+  actividad: EventoTiempoReal[] = [];
+  readonly presentacion = PRESENTACION_EVENTOS;
 
   constructor(
     private prestamoService: PrestamoService,
@@ -54,12 +58,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private servidor: ServidorService,
     private workers: WorkersService,
     private grpc: GrpcService,
-    private asistente: AsistenteService
+    private asistente: AsistenteService,
+    private tiempoReal: TiempoRealService
   ) {}
 
   ngOnInit(): void {
     this.cargarDashboard();
     this.cargarPlataforma();
+    this.subs.add(this.tiempoReal.actividad$.subscribe((a) => (this.actividad = a.slice(0, 8))));
+    this.subs.add(this.tiempoReal
+      .de('ABONO_REGISTRADO', 'PRESTAMO_CREADO', 'CAJA_CERRADA')
+      .pipe(debounceTime(600))
+      .subscribe(() => this.cargarDashboard(true)));
   }
 
   ngOnDestroy(): void {
@@ -83,8 +93,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  cargarDashboard(): void {
-    this.cargando = true;
+  /** @param silencioso recarga por un evento en vivo: no muestra el indicador de carga. */
+  cargarDashboard(silencioso = false): void {
+    if (!silencioso) this.cargando = true;
     this.error = '';
     forkJoin({
       prestamos: this.prestamoService.obtenerPrestamos(),
