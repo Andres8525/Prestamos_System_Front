@@ -208,3 +208,14 @@ button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }
 .table-wrapper { max-height: 70vh; overflow: auto; -webkit-overflow-scrolling: touch; }
 table thead th { position: sticky; top: 0; z-index: 1; background: var(--superficie-2); }
 table tbody td { font-variant-numeric: tabular-nums; }
+
+/* Microinteracciones: botones que responden al clic y tarjetas de indicadores que se elevan */
+.btn { transition: transform var(--rapido) var(--curva), box-shadow var(--rapido), background var(--rapido); }
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.kpi, .stat-card { transition: transform var(--medio) var(--curva), box-shadow var(--medio); }
+.kpi:hover, .stat-card:hover { transform: translateY(-3px); box-shadow: var(--sombra-lg); }
+.kpi strong, .stat-value { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  .btn, .kpi, .stat-card { transition: none; }
+  .kpi:hover, .stat-card:hover { transform: none; }
+}
