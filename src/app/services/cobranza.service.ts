@@ -85,8 +85,13 @@ export class CobranzaService {
 
 /** Extrae un mensaje legible de un error HTTP del backend. */
 export function mensajeError(err: any, fallback: string): string {
+  if (err?.status === 0) {
+    return 'No se pudo conectar con el servidor. Si acaba de desplegarse o estuvo inactivo, '
+      + 'puede tardar hasta un minuto en responder: inténtalo de nuevo.';
+  }
+  if (err?.status >= 500) return 'El servidor tuvo un problema al procesar la solicitud. Inténtalo de nuevo.';
   const e = err?.error;
-  if (!e) return err?.status === 0 ? 'No se pudo conectar con el servidor.' : fallback;
+  if (!e) return fallback;
   if (typeof e === 'string') return e;
   if (e.error) return e.error;
   const campos = Object.entries(e as Record<string, unknown>).filter(([, v]) => typeof v === 'string');
