@@ -311,3 +311,22 @@
   .acceso-tarjeta { padding: 24px 20px; border-radius: 16px; }
   .acceso h1 { font-size: 22px; }
 }
+
+/* Indicador del estado del servidor (en línea / despertando / sin conexión) */
+.acceso-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.estado-servidor {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 10px; border-radius: 999px; border: 1px solid var(--acceso-borde);
+  background: rgba(255, 255, 255, 0.04); color: var(--acceso-suave);
+  font: inherit; font-size: 11.5px; cursor: pointer; transition: background 0.2s;
+}
+.estado-servidor:hover { background: rgba(255, 255, 255, 0.08); }
+.estado-servidor i { width: 8px; height: 8px; border-radius: 50%; background: #71717a; }
+.estado-servidor.en-linea { color: #bbf7d0; }
+.estado-servidor.en-linea i { background: #22c55e; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); animation: latido 2.4s infinite; }
+.estado-servidor.despertando i, .estado-servidor.comprobando i { background: #86efac; animation: parpadeo 1s ease-in-out infinite; }
+.estado-servidor.sin-conexion { color: #fecaca; }
+.estado-servidor.sin-conexion i { background: #f87171; }
+@keyframes latido { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); } 70% { box-shadow: 0 0 0 7px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+@keyframes parpadeo { 50% { opacity: 0.3; } }
+@media (prefers-reduced-motion: reduce) { .estado-servidor i { animation: none !important; } }
