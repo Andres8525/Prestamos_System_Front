@@ -5,11 +5,14 @@ Consume la API del repositorio `Prestamos_System_Back`.
 
 ## Funcionalidades
 
-- **Acceso:** registro, inicio y cierre de sesión. Las rutas privadas están protegidas y el token se envía solo a la API.
+- **Acceso en dos pasos:** primero el email; si tiene cuenta se pide la contraseña y si no, se crea la cuenta
+  en el mismo flujo. Cierre de sesión, rutas privadas protegidas y aviso cuando el servidor tarda en despertar.
 - **Cartera:** clientes, préstamos con simulador de intereses y cuotas con saldo.
 - **Cobranza:** cobradores, ruta de cobro diaria con registro de abonos y cuadre de caja.
-- **Scoring IA:** probabilidad de incumplimiento por cliente y alerta antes de renovar un crédito.
-- **Tienda:** catálogo, carrito, venta al contado o a crédito (genera el préstamo) e historial de pedidos.
+- **Scoring IA:** probabilidad de incumplimiento por cliente, alerta antes de renovar un crédito y evolución
+  del riesgo de cada cliente.
+- **Machine Learning:** comparación de algoritmos (regresión logística vs. árbol de decisión), matriz de
+  confusión, curva ROC, importancia de variables, simulador de riesgo e historial de entrenamientos.
 
 ## Desarrollo
 
@@ -22,7 +25,11 @@ npm test         # pruebas unitarias (Vitest)
 npm run build    # compilación de producción en dist/sistema_cobro/browser
 ```
 
-Con el backend en modo desarrollo se puede entrar con `admin@cobro.com` / `Admin123*` o crear una cuenta en **/registro**.
+Con el backend en modo desarrollo se puede entrar con `admin@cobro.com` / `Admin123*` o escribir cualquier
+email nuevo para crear una cuenta.
+
+> La app usa **zone.js** (`polyfills` en `angular.json` y `provideZoneChangeDetection` en `AppModule`).
+> Sin él, Angular 21 no redibuja la vista al llegar las respuestas HTTP y los formularios quedan colgados.
 
 ## Configuración de la API
 
@@ -42,9 +49,9 @@ Con el backend en modo desarrollo se puede entrar con `admin@cobro.com` / `Admin
 ## Estructura
 
 ```
-src/app/auth        login, registro, guards e interceptor
+src/app/auth        acceso en dos pasos, fondo animado, guards e interceptor
 src/app/layout      marco privado (menú lateral y barra superior)
-src/app/tienda      catálogo, carrito, productos y pedidos
-src/app/services    acceso a la API, sesión, carrito y notificaciones
+src/app/ml          panel de Machine Learning
+src/app/services    acceso a la API, sesión, Machine Learning y notificaciones
 src/styles          tokens de diseño, componentes, animaciones y layouts
 ```

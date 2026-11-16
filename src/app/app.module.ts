@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, provideZoneChangeDetection } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -47,7 +47,12 @@ import { AccesoFondoComponent } from './auth/acceso-fondo.component';
     ToastsComponent,
     AccesoFondoComponent
   ],
-  providers: [provideHttpClient(withInterceptors([authInterceptor]))],
+  providers: [
+    // Angular 21 trabaja sin zone.js por defecto: sin esto la vista no se actualiza
+    // cuando llega una respuesta HTTP (botones colgados en "Ingresando…", listas sin cargar).
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideHttpClient(withInterceptors([authInterceptor]))
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
