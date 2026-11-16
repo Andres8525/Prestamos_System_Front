@@ -121,4 +121,67 @@
       </div>
     </div>
   }
+
+  <div class="card ml-seccion">
+    <h2 class="form-title">Simulador de riesgo</h2>
+    <p class="ml-nota">Mueve los indicadores de comportamiento de pago y observa cómo cambia la predicción del modelo.</p>
+    <div class="perfiles">
+      <button class="btn btn-secondary btn-sm" (click)="aplicarPerfil('bueno')">Buen pagador</button>
+      <button class="btn btn-secondary btn-sm" (click)="aplicarPerfil('irregular')">Irregular</button>
+      <button class="btn btn-secondary btn-sm" (click)="aplicarPerfil('moroso')">Moroso</button>
+    </div>
+    <div class="simulador">
+      <div>
+        <div class="deslizador">
+          <label for="s-prom">Días promedio de atraso <b>{{ entrada.promedioDiasAtraso | number: '1.1-1' }}</b></label>
+          <input id="s-prom" type="range" min="0" max="30" step="0.5" [(ngModel)]="entrada.promedioDiasAtraso" (ngModelChange)="simular()" />
+        </div>
+        <div class="deslizador">
+          <label for="s-max">Máximo atraso (días) <b>{{ entrada.maxDiasAtraso }}</b></label>
+          <input id="s-max" type="range" min="0" max="60" step="1" [(ngModel)]="entrada.maxDiasAtraso" (ngModelChange)="simular()" />
+        </div>
+        <div class="deslizador">
+          <label for="s-atr">Cuotas pagadas fuera de plazo <b>{{ entrada.tasaCuotasAtrasadas | percent }}</b></label>
+          <input id="s-atr" type="range" min="0" max="1" step="0.05" [(ngModel)]="entrada.tasaCuotasAtrasadas" (ngModelChange)="simular()" />
+        </div>
+        <div class="deslizador">
+          <label for="s-inc">Abonos incompletos <b>{{ entrada.tasaAbonosIncompletos | percent }}</b></label>
+          <input id="s-inc" type="range" min="0" max="1" step="0.05" [(ngModel)]="entrada.tasaAbonosIncompletos" (ngModelChange)="simular()" />
+        </div>
+        <div class="deslizador">
+          <label for="s-frec">Regularidad de abonos (abonos por cuota) <b>{{ entrada.frecuenciaPago | number: '1.2-2' }}</b></label>
+          <input id="s-frec" type="range" min="0" max="1.5" step="0.05" [(ngModel)]="entrada.frecuenciaPago" (ngModelChange)="simular()" />
+        </div>
+        <div class="deslizador">
+          <label for="s-saldo">Saldo vencido sin pagar <b>{{ entrada.tasaSaldoVencido | percent }}</b></label>
+          <input id="s-saldo" type="range" min="0" max="1" step="0.05" [(ngModel)]="entrada.tasaSaldoVencido" (ngModelChange)="simular()" />
+        </div>
+        <div class="deslizador">
+          <label for="s-prev">Préstamos anteriores cancelados <b>{{ entrada.prestamosPagados }}</b></label>
+          <input id="s-prev" type="range" min="0" max="10" step="1" [(ngModel)]="entrada.prestamosPagados" (ngModelChange)="simular()" />
+        </div>
+      </div>
+      <div>
+        @if (simulacion; as s) {
+          <div class="medidor" [ngClass]="claseMedidor" [style.--p]="s.probabilidadDefault * 100">
+            <div><strong>{{ s.probabilidadDefault | percent: '1.0-0' }}</strong><small>prob. de incumplimiento</small></div>
+          </div>
+          <p style="text-align:center">
+            <span class="badge" [ngClass]="'riesgo-' + s.nivelRiesgo.toLowerCase()">RIESGO {{ s.nivelRiesgo }}</span>
+            <span class="badge">{{ s.recomendacion }}</span>
+          </p>
+          <p class="ml-nota" style="margin:12px 0 8px;text-align:center">{{ s.mensaje }}</p>
+          <ul class="factores">
+            @for (f of s.factores; track f.variable) {
+              <li>{{ f.descripcion }}
+                <span [class.sube]="f.impacto > 0" [class.baja]="f.impacto <= 0">{{ f.impacto > 0 ? '▲ sube' : '▼ baja' }} el riesgo</span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="loading-text" style="min-height:150px">Calculando…</div>
+        }
+      </div>
+    </div>
+  </div>
 </div>
