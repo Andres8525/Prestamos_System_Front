@@ -17,11 +17,9 @@ import { AsistenteComponent } from './asistente/asistente.component';
 import { authGuard, invitadoGuard } from './auth/auth.guard';
 
 const routes: Routes = [
-  // Zona pública
   { path: 'login', component: AccesoComponent, canActivate: [invitadoGuard], title: 'Ingresar · CrediRuta' },
   { path: 'registro', component: AccesoComponent, canActivate: [invitadoGuard], data: { modo: 'registro' }, title: 'Crear cuenta · CrediRuta' },
 
-  // Zona privada: requiere sesión
   {
     path: '',
     component: ShellComponent,

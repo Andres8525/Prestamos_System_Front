@@ -21,7 +21,6 @@ import { GrpcComponent } from './grpc/grpc.component';
 import { AsistenteComponent } from './asistente/asistente.component';
 import { authInterceptor } from './auth/auth.interceptor';
 
-// Standalone components
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { ToastsComponent } from './components/toasts/toasts.component';
 import { AccesoFondoComponent } from './auth/acceso-fondo.component';

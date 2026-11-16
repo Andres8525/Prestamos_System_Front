@@ -11,7 +11,6 @@ export class CobranzaService {
 
   constructor(private http: HttpClient) {}
 
-  // --- Cobradores
   obtenerCobradores(soloActivos = false): Observable<Cobrador[]> {
     return this.http.get<Cobrador[]>(`${this.api}/cobradores`, { params: { soloActivos } });
   }
@@ -28,7 +27,6 @@ export class CobranzaService {
     return this.http.delete<void>(`${this.api}/cobradores/${id}`);
   }
 
-  // --- Ruta y abonos
   obtenerRuta(cobradorId: number, fecha?: string): Observable<RutaCobro> {
     return this.http.get<RutaCobro>(`${this.api}/rutas/cobrador/${cobradorId}`, { params: this.fecha(fecha) });
   }
@@ -55,7 +53,6 @@ export class CobranzaService {
     return this.http.get<Abono[]>(`${this.api}/abonos/prestamo/${prestamoId}`);
   }
 
-  // --- Caja
   consultarCaja(cobradorId: number, fecha?: string, baseInicial?: number, gastos?: number): Observable<CuadreCaja> {
     let params = this.fecha(fecha);
     if (baseInicial != null) params = params.set('baseInicial', baseInicial);
@@ -74,7 +71,6 @@ export class CobranzaService {
     return this.http.get<CuadreCaja[]>(`${this.api}/caja/cobrador/${cobradorId}/historial`);
   }
 
-  // --- Scoring IA
   evaluarCliente(clienteId: number): Observable<Scoring> {
     return this.http.get<Scoring>(`${this.api}/scoring/cliente/${clienteId}`);
   }
