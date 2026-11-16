@@ -13,22 +13,20 @@ import { ListCobradoresComponent } from './cobradores/list-cobradores.component'
 import { RutaCobroComponent } from './ruta/ruta-cobro.component';
 import { CuadreCajaComponent } from './caja/cuadre-caja.component';
 import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
-import { LoginComponent } from './auth/login.component';
-import { RegisterComponent } from './auth/register.component';
+import { AccesoComponent } from './auth/acceso.component';
 import { ShellComponent } from './layout/shell.component';
 import { authInterceptor } from './auth/auth.interceptor';
 
 // Standalone components
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { ToastsComponent } from './components/toasts/toasts.component';
-import { AuthMarcaComponent } from './auth/auth-marca.component';
+import { AccesoFondoComponent } from './auth/acceso-fondo.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ShellComponent,
-    LoginComponent,
-    RegisterComponent,
+    AccesoComponent,
     DashboardComponent,
     ListClientesComponent,
     ListPrestamosComponent,
@@ -45,7 +43,7 @@ import { AuthMarcaComponent } from './auth/auth-marca.component';
     ReactiveFormsModule,
     NavMenuComponent,
     ToastsComponent,
-    AuthMarcaComponent
+    AccesoFondoComponent
   ],
   providers: [provideHttpClient(withInterceptors([authInterceptor]))],
   bootstrap: [AppComponent]

@@ -8,15 +8,14 @@ import { ListCobradoresComponent } from './cobradores/list-cobradores.component'
 import { RutaCobroComponent } from './ruta/ruta-cobro.component';
 import { CuadreCajaComponent } from './caja/cuadre-caja.component';
 import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
-import { LoginComponent } from './auth/login.component';
-import { RegisterComponent } from './auth/register.component';
+import { AccesoComponent } from './auth/acceso.component';
 import { ShellComponent } from './layout/shell.component';
 import { authGuard, invitadoGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   // Zona pública
-  { path: 'login', component: LoginComponent, canActivate: [invitadoGuard], title: 'Iniciar sesión · CrediRuta' },
-  { path: 'registro', component: RegisterComponent, canActivate: [invitadoGuard], title: 'Crear cuenta · CrediRuta' },
+  { path: 'login', component: AccesoComponent, canActivate: [invitadoGuard], title: 'Ingresar · CrediRuta' },
+  { path: 'registro', component: AccesoComponent, canActivate: [invitadoGuard], data: { modo: 'registro' }, title: 'Crear cuenta · CrediRuta' },
 
   // Zona privada: requiere sesión
   {
