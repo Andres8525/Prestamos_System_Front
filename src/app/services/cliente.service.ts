@@ -12,6 +12,11 @@ export class ClienteService {
 
   constructor(private http: HttpClient) {}
 
+  /** Autocompletado por prefijo de nombre, apellido o cédula (índice Trie en el servidor, sin tildes). */
+  buscar(texto: string, limite = 20): Observable<Cliente[]> {
+    return this.http.get<Cliente[]>(`${this.apiUrl}/buscar`, { params: { q: texto, limite } });
+  }
+
   obtenerClientes(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(this.apiUrl);
   }
