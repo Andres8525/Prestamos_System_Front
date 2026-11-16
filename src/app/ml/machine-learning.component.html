@@ -1,0 +1,55 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <h1>Machine Learning</h1>
+      <p class="subtitulo">Modelo de credit scoring que predice la probabilidad de incumplimiento a partir del historial de abonos</p>
+    </div>
+    <button class="btn btn-primary" (click)="reentrenar()" [disabled]="entrenando">
+      @if (entrenando) { <span class="spinner"></span> Entrenando… } @else { Reentrenar modelo }
+    </button>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+
+  @if (cargando && !resumen) {
+    <div class="loading-text">Cargando el modelo...</div>
+  }
+
+  @if (resumen; as r) {
+    <div class="kpis">
+      <div class="kpi"><span>Modelo en producción</span><strong style="font-size:15px">{{ r.modelo.algoritmo }}</strong></div>
+      <div class="kpi positivo"><span>AUC-ROC (prueba)</span><strong>{{ r.evaluacionPrueba.auc | number: '1.3-3' }}</strong></div>
+      <div class="kpi"><span>AUC validación cruzada</span><strong>{{ r.validacionCruzada.aucMedia | number: '1.3-3' }} <small>± {{ r.validacionCruzada.aucDesviacion | number: '1.3-3' }}</small></strong></div>
+      <div class="kpi"><span>F1 (prueba)</span><strong>{{ r.evaluacionPrueba.f1 | number: '1.3-3' }}</strong></div>
+      <div class="kpi"><span>Datos (entrenamiento / prueba)</span><strong>{{ r.muestrasEntrenamiento }} / {{ r.muestrasPrueba }}</strong></div>
+      <div class="kpi"><span>Préstamos reales usados</span><strong>{{ r.modelo.muestrasReales }}</strong></div>
+    </div>
+
+    <div class="card ml-seccion">
+      <h2 class="form-title">Comparación de algoritmos</h2>
+      <p class="ml-nota">Cada algoritmo se evalúa con validación cruzada de {{ r.validacionCruzada.pliegues }} pliegues;
+        se pone en producción el de mayor AUC promedio.</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Algoritmo</th><th>AUC validación</th><th>AUC prueba</th><th>Exactitud</th><th>F1</th><th></th></tr>
+          </thead>
+          <tbody>
+            @for (c of r.comparacion; track c.algoritmo) {
+              <tr>
+                <td><b>{{ c.algoritmo }}</b></td>
+                <td>{{ c.aucValidacion | number: '1.3-3' }} <small>± {{ c.aucDesviacion | number: '1.3-3' }}</small></td>
+                <td>{{ c.aucPrueba | number: '1.3-3' }}</td>
+                <td>{{ c.exactitudPrueba | percent: '1.1-1' }}</td>
+                <td>{{ c.f1Prueba | number: '1.3-3' }}</td>
+                <td>@if (c.seleccionado) { <span class="ml-chip ganador">✓ En producción</span> }</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

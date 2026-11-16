@@ -40,7 +40,10 @@ export class MenuService {
     },
     {
       titulo: 'Inteligencia',
-      items: [{ label: 'Scoring IA', route: '/scoring', icon: 'ai' }]
+      items: [
+        { label: 'Scoring IA', route: '/scoring', icon: 'ai' },
+        { label: 'Machine Learning', route: '/ml', icon: 'ml' }
+      ]
     }
   ];
 

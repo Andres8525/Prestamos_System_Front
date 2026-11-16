@@ -14,6 +14,7 @@ import { RutaCobroComponent } from './ruta/ruta-cobro.component';
 import { CuadreCajaComponent } from './caja/cuadre-caja.component';
 import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
 import { AccesoComponent } from './auth/acceso.component';
+import { MachineLearningComponent } from './ml/machine-learning.component';
 import { ShellComponent } from './layout/shell.component';
 import { authInterceptor } from './auth/auth.interceptor';
 
@@ -34,7 +35,8 @@ import { AccesoFondoComponent } from './auth/acceso-fondo.component';
     ListCobradoresComponent,
     RutaCobroComponent,
     CuadreCajaComponent,
-    ScoringRiesgoComponent
+    ScoringRiesgoComponent,
+    MachineLearningComponent
   ],
   imports: [
     BrowserModule,

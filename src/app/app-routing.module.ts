@@ -9,6 +9,7 @@ import { RutaCobroComponent } from './ruta/ruta-cobro.component';
 import { CuadreCajaComponent } from './caja/cuadre-caja.component';
 import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
 import { AccesoComponent } from './auth/acceso.component';
+import { MachineLearningComponent } from './ml/machine-learning.component';
 import { ShellComponent } from './layout/shell.component';
 import { authGuard, invitadoGuard } from './auth/auth.guard';
 
@@ -31,7 +32,8 @@ const routes: Routes = [
       { path: 'cobradores', component: ListCobradoresComponent, title: 'Cobradores · CrediRuta' },
       { path: 'ruta', component: RutaCobroComponent, title: 'Ruta de cobro · CrediRuta' },
       { path: 'caja', component: CuadreCajaComponent, title: 'Cuadre de caja · CrediRuta' },
-      { path: 'scoring', component: ScoringRiesgoComponent, title: 'Scoring IA · CrediRuta' }
+      { path: 'scoring', component: ScoringRiesgoComponent, title: 'Scoring IA · CrediRuta' },
+      { path: 'ml', component: MachineLearningComponent, title: 'Machine Learning · CrediRuta' }
     ]
   },
   { path: '**', redirectTo: '' }
