@@ -1,3 +1,4 @@
+import { sinMarcasMarkdown } from './texto-plano';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AsistenteService } from '../services/asistente.service';
 import { mensajeError } from '../services/cobranza.service';
@@ -42,7 +43,7 @@ export class AsistenteComponent implements OnInit {
     this.desplazar();
     this.asistente.preguntar(pregunta).subscribe({
       next: (r) => {
-        this.mensajes.push({ rol: 'asistente', texto: r.texto, origen: r.origen, modelo: r.modelo, tokens: r.tokens, hora: new Date() });
+        this.mensajes.push({ rol: 'asistente', texto: sinMarcasMarkdown(r.texto), origen: r.origen, modelo: r.modelo, tokens: r.tokens, hora: new Date() });
         this.enviando = false;
         this.desplazar();
       },

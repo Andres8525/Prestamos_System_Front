@@ -1,5 +1,6 @@
 /* ── Tokens de diseño: paleta, tipografía, radios y sombras ───────────── */
 :root {
+  color-scheme: light;
   /* Marca */
   --primario: #4f46e5;
   --primario-oscuro: #4338ca;

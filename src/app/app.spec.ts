@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { mensajeError } from './services/cobranza.service';
+import { sinMarcasMarkdown } from './asistente/texto-plano';
 
 describe('AuthService', () => {
   beforeEach(() => {
@@ -42,5 +43,12 @@ describe('mensajeError', () => {
     expect(mensajeError({ status: 401, error: { error: 'Email o contraseña incorrectos' } }, 'x'))
       .toBe('Email o contraseña incorrectos');
     expect(mensajeError({ status: 400, error: { password: 'muy corta' } }, 'x')).toBe('password: muy corta');
+  });
+});
+
+describe('sinMarcasMarkdown', () => {
+  it('quita negritas, encabezados y separadores de tabla sin tocar las listas', () => {
+    const texto = '## Resumen\n**Saldo vencido**: 24 %\n|---|---|\n- Visitar a los atrasados';
+    expect(sinMarcasMarkdown(texto)).toBe('Resumen\nSaldo vencido: 24 %\n\n- Visitar a los atrasados');
   });
 });
