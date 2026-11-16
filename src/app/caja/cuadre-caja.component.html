@@ -1,0 +1,127 @@
+<div class="list-container">
+  <div class="page-header">
+    <h1>Cuadre de Caja</h1>
+    <div class="header-actions">
+      <select class="filtro" [(ngModel)]="cobradorId" name="cobrador" (ngModelChange)="cambiarCobrador()">
+        @for (c of cobradores; track c.id) {
+          <option [ngValue]="c.id">{{ c.nombre }} — {{ c.zona }}</option>
+        }
+      </select>
+      <input class="filtro" type="date" [(ngModel)]="fecha" name="fecha" (ngModelChange)="consultar()" />
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+  }
+  @if (mensaje) {
+    <div class="alert alert-success">{{ mensaje }}</div>
+  }
+
+  @if (cuadre) {
+    <div class="kpis">
+      <div class="kpi"><span>Base inicial</span><strong>{{ cuadre.baseInicial | currency }}</strong></div>
+      <div class="kpi positivo"><span>+ Cobrado ({{ cuadre.numeroAbonos }} abonos)</span><strong>{{ cuadre.totalCobrado | currency }}</strong></div>
+      <div class="kpi negativo"><span>− Prestado ({{ cuadre.numeroPrestamos }})</span><strong>{{ cuadre.totalPrestado | currency }}</strong></div>
+      <div class="kpi negativo"><span>− Gastos</span><strong>{{ cuadre.gastos | currency }}</strong></div>
+      <div class="kpi"><span>= Efectivo esperado</span><strong>{{ cuadre.efectivoEsperado | currency }}</strong></div>
+    </div>
+
+    @if (cuadre.estado === 'CERRADA') {
+      <div class="card">
+        <h2 class="form-title">Caja cerrada el {{ cuadre.fechaCierre | date: 'dd/MM/yyyy HH:mm' }}</h2>
+        <p>Efectivo entregado: <strong>{{ cuadre.efectivoEntregado | currency }}</strong> ·
+          Diferencia: <strong>{{ cuadre.diferencia | currency }}</strong>
+          <span class="badge" [ngClass]="claseResultado(cuadre.resultado)">{{ cuadre.resultado }}</span></p>
+        @if (cuadre.observacion) { <p><small>{{ cuadre.observacion }}</small></p> }
+      </div>
+    } @else {
+      <div class="card">
+        <h2 class="form-title">Cerrar caja del día</h2>
+        <form class="form-grid" (ngSubmit)="cerrarCaja()">
+          <div class="form-group">
+            <label for="base">Base inicial</label>
+            <input id="base" type="number" min="0" [(ngModel)]="baseInicial" name="base" (change)="consultar()" />
+          </div>
+          <div class="form-group">
+            <label for="gastos">Gastos del día</label>
+            <input id="gastos" type="number" min="0" [(ngModel)]="gastos" name="gastos" (change)="consultar()" />
+          </div>
+          <div class="form-group">
+            <label for="entregado">Efectivo entregado</label>
+            <input id="entregado" type="number" min="0" [(ngModel)]="efectivoEntregado" name="entregado" />
+          </div>
+          <div class="form-group">
+            <label for="obs">Observación</label>
+            <input id="obs" [(ngModel)]="observacion" name="obs" />
+          </div>
+          @if (diferenciaPrevista !== null) {
+            <div class="simulacion">
+              <div><span>Diferencia</span><strong>{{ diferenciaPrevista | currency }}</strong></div>
+              <div><span>Resultado</span><strong>{{ diferenciaPrevista === 0 ? 'CUADRADA' : diferenciaPrevista > 0 ? 'SOBRANTE' : 'FALTANTE' }}</strong></div>
+            </div>
+          }
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success">Cerrar caja</button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <div class="card">
+      <h2 class="form-title">Abonos del día</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Hora</th><th>Cliente</th><th>Préstamo</th><th>Monto</th><th>Cuota esperada</th><th></th></tr></thead>
+          <tbody>
+            @for (a of cuadre.abonos; track a.id) {
+              <tr>
+                <td>{{ a.fechaRegistro | date: 'HH:mm' }}</td>
+                <td>{{ a.clienteNombre }}</td>
+                <td>#{{ a.prestamoId }}</td>
+                <td>{{ a.monto | currency }}</td>
+                <td>{{ a.cuotaEsperada | currency }}</td>
+                <td>@if (a.incompleto) { <span class="badge estado-pendiente">INCOMPLETO</span> }</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="6" class="empty-state">Sin abonos registrados</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (cuadre.desembolsos.length) {
+        <h2 class="form-title" style="margin-top:16px">Préstamos desembolsados</h2>
+        <ul>
+          @for (d of cuadre.desembolsos; track d.prestamoId) {
+            <li>#{{ d.prestamoId }} · {{ d.clienteNombre }} · {{ d.monto | currency }}</li>
+          }
+        </ul>
+      }
+    </div>
+  }
+
+  @if (historial.length) {
+    <div class="card">
+      <h2 class="form-title">Historial de cierres</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Fecha</th><th>Base</th><th>Cobrado</th><th>Prestado</th><th>Gastos</th><th>Esperado</th><th>Entregado</th><th>Diferencia</th></tr></thead>
+          <tbody>
+            @for (h of historial; track h.id) {
+              <tr>
+                <td>{{ h.fecha | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ h.baseInicial | currency }}</td>
+                <td>{{ h.totalCobrado | currency }}</td>
+                <td>{{ h.totalPrestado | currency }}</td>
+                <td>{{ h.gastos | currency }}</td>
+                <td>{{ h.efectivoEsperado | currency }}</td>
+                <td>{{ h.efectivoEntregado | currency }}</td>
+                <td><span class="badge" [ngClass]="claseResultado(h.resultado)">{{ h.diferencia | currency }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
