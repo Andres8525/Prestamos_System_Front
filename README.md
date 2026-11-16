@@ -13,6 +13,26 @@ Consume la API del repositorio `Prestamos_System_Back`.
   del riesgo de cada cliente.
 - **Machine Learning:** comparación de algoritmos (regresión logística vs. árbol de decisión), matriz de
   confusión, curva ROC, importancia de variables, simulador de riesgo e historial de entrenamientos.
+- **Asistente IA (Groq):** chat sobre la cartera y botón «Explicar con IA» en el scoring. Pasa siempre por el
+  backend (`/api/asistente`): la clave de Groq **no** se configura en el frontend.
+- **Procesos:** cola de tareas del backend (workers con prioridad, reintentos y resultados descargables) y
+  proyección Monte Carlo del recaudo en un **Web Worker** del navegador.
+- **Servicios gRPC:** servicios, patrón de cada método (unario, streaming de servidor/cliente, bidireccional),
+  métricas de uso y visor de los contratos `.proto`.
+- **Servidor siempre activo:** al abrir la app se despierta el backend y, con la pestaña visible, se le hace ping
+  cada 4 minutos (`latidoServidorMs`); el login muestra el estado (en línea / despertando / sin conexión).
+
+## Web Workers
+
+Los cálculos pesados corren en otro hilo para no congelar la interfaz (`src/app/workers`):
+
+| Worker | Uso |
+|---|---|
+| `csv.worker.ts` | Exportar clientes y préstamos a CSV (RFC 4180, con BOM para Excel) |
+| `proyeccion.worker.ts` | Simulación Monte Carlo del recaudo con las probabilidades del modelo de ML |
+
+`WebWorkerService` crea el worker, reenvía el avance y lo termina al acabar; si el navegador no soporta workers
+usa la misma función pura en el hilo principal. La configuración está en `tsconfig.worker.json`.
 
 ## Desarrollo
 
@@ -45,6 +65,8 @@ email nuevo para crear una cuenta.
    la carpeta de salida (`dist/sistema_cobro/browser`) y la reescritura de rutas para la SPA.
 3. Verificar que `apiUrl` en `environment.prod.ts` apunte al backend desplegado.
 4. En el backend (Render), `ALLOWED_ORIGINS` debe incluir el dominio de Vercel (por defecto `https://*.vercel.app`).
+5. Para el asistente de IA, defina `GROQ_API_KEY` **en Render** (backend). No agregue claves en Vercel ni en
+   `environment*.ts`: todo lo que se compila en el frontend es público.
 
 ## Estructura
 
@@ -52,6 +74,10 @@ email nuevo para crear una cuenta.
 src/app/auth        acceso en dos pasos, fondo animado, guards e interceptor
 src/app/layout      marco privado (menú lateral y barra superior)
 src/app/ml          panel de Machine Learning
+src/app/asistente   chat con el asistente de IA (Groq, vía backend)
+src/app/procesos    workers del servidor y proyección en Web Worker
+src/app/grpc        panel de servicios gRPC
+src/app/workers     Web Workers y sus funciones puras (probadas con Vitest)
 src/app/services    acceso a la API, sesión, Machine Learning y notificaciones
 src/styles          tokens de diseño, componentes, animaciones y layouts
 ```
