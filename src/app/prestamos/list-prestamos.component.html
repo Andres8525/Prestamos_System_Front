@@ -2,9 +2,14 @@
   <div class="page-header">
     <h1>Gestión de Préstamos</h1>
     <div class="header-actions">
-      <button class="btn btn-secondary" (click)="actualizarEstados()">
-        Actualizar Estados
-      </button>
+      <select class="filtro" [(ngModel)]="filtroEstado" name="filtro">
+        <option value="">Todos los estados</option>
+        <option value="AL_DIA">Al día</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="ATRASADO">Atrasado</option>
+        <option value="PAGADO">Pagado</option>
+      </select>
+      <button class="btn btn-secondary" (click)="actualizarEstados()">Actualizar Estados</button>
       <button class="btn btn-primary" (click)="toggleFormulario()">
         {{ mostraFormulario ? 'Cancelar' : '+ Nuevo Préstamo' }}
       </button>
@@ -17,32 +22,99 @@
 
   @if (mostraFormulario) {
     <div class="card">
-      <h2 class="form-title">Crear Préstamo</h2>
+      <h2 class="form-title">{{ esRenovacion ? 'Renovación de crédito' : 'Emitir préstamo' }}</h2>
       <form (ngSubmit)="guardarPrestamo()" class="form-grid">
         <div class="form-group">
           <label for="cliente">Cliente</label>
-          <select id="cliente" [(ngModel)]="nuevoPresta.clienteId" name="cliente">
+          <select id="cliente" [(ngModel)]="solicitud.clienteId" name="cliente" (ngModelChange)="onClienteChange()">
             <option [ngValue]="undefined">Seleccionar cliente</option>
             @for (cliente of clientes; track cliente.id) {
-              <option [ngValue]="cliente.id">{{ cliente.nombre }}</option>
+              <option [ngValue]="cliente.id">{{ cliente.nombre }} — {{ cliente.cedula }}</option>
             }
           </select>
         </div>
         <div class="form-group">
-          <label for="monto">Monto</label>
-          <input type="number" id="monto" [(ngModel)]="nuevoPresta.monto"
-                 name="monto" placeholder="0.00" />
+          <label for="cobrador">Cobrador responsable</label>
+          <select id="cobrador" [(ngModel)]="solicitud.cobradorId" name="cobrador">
+            <option [ngValue]="undefined">Sin asignar</option>
+            @for (c of cobradores; track c.id) {
+              <option [ngValue]="c.id">{{ c.nombre }} ({{ c.zona }})</option>
+            }
+          </select>
         </div>
         <div class="form-group">
-          <label for="tipo">Tipo de Liquidación</label>
-          <select id="tipo" [(ngModel)]="nuevoPresta.tipoLiquidacion" name="tipo">
+          <label for="monto">Capital</label>
+          <input type="number" id="monto" min="1" [(ngModel)]="solicitud.monto" name="monto"
+                 placeholder="0.00" (ngModelChange)="simular()" />
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo de liquidación</label>
+          <select id="tipo" [(ngModel)]="solicitud.tipoLiquidacion" name="tipo" (ngModelChange)="onTipoChange()">
             @for (tipo of tiposLiquidacion; track tipo) {
               <option [value]="tipo">{{ tipo }}</option>
             }
           </select>
         </div>
+        <div class="form-group">
+          <label for="tasa">Tasa de interés (%)</label>
+          <input type="number" id="tasa" min="0" max="100" [(ngModel)]="solicitud.tasaInteres" name="tasa"
+                 (ngModelChange)="simular()" />
+        </div>
+        <div class="form-group">
+          <label for="cuotas">Número de cuotas</label>
+          <input type="number" id="cuotas" min="1" max="365" [(ngModel)]="solicitud.numeroCuotas" name="cuotas"
+                 (ngModelChange)="simular()" />
+        </div>
+
+        @if (simulacion) {
+          <div class="simulacion">
+            <div><span>Interés</span><strong>{{ simulacion.interes | currency }}</strong></div>
+            <div><span>Total a pagar</span><strong>{{ simulacion.montoTotal | currency }}</strong></div>
+            <div><span>Cuota {{ simulacion.tipoLiquidacion | lowercase }}</span><strong>{{ simulacion.valorCuota | currency }}</strong></div>
+            <div><span>Vence</span><strong>{{ simulacion.fechaVencimiento | date: 'dd/MM/yyyy' }}</strong></div>
+          </div>
+        }
+
+        @if (cargandoScoring) {
+          <div class="scoring-box">Evaluando riesgo con IA…</div>
+        }
+        @if (scoring && !cargandoScoring) {
+          <div class="scoring-box" [ngClass]="'riesgo-' + scoring.nivelRiesgo.toLowerCase()">
+            <div class="scoring-head">
+              <span class="ia-tag">IA · Scoring</span>
+              <strong>Riesgo {{ scoring.nivelRiesgo }}</strong>
+              <span>Prob. de incumplimiento: <b>{{ scoring.probabilidadDefault | percent: '1.0-1' }}</b></span>
+              <span>Puntaje: <b>{{ scoring.puntaje }}</b>/1000</span>
+              <span class="badge">{{ scoring.recomendacion }}</span>
+            </div>
+            <p>{{ scoring.mensaje }}</p>
+            @if (!scoring.sinHistorial) {
+              <ul class="factores">
+                @for (f of scoring.factores; track f.variable) {
+                  <li>{{ f.descripcion }}: <b>{{ f.valor }}</b>
+                    <span [class.sube]="f.impacto > 0" [class.baja]="f.impacto <= 0">
+                      {{ f.impacto > 0 ? '▲ aumenta' : '▼ reduce' }} el riesgo
+                    </span>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+
+        @if (alertaRiesgo) {
+          <div class="alert alert-error alerta-ia">
+            <p>{{ alertaRiesgo }}</p>
+            <button type="button" class="btn btn-danger btn-sm" (click)="guardarPrestamo(true)">
+              Aprobar de todos modos
+            </button>
+          </div>
+        }
+
         <div class="form-actions">
-          <button type="submit" class="btn btn-success">Guardar</button>
+          <button type="submit" class="btn btn-success" [disabled]="guardando">
+            {{ esRenovacion ? 'Aprobar renovación' : 'Emitir préstamo' }}
+          </button>
         </div>
       </form>
     </div>
@@ -55,30 +127,50 @@
       <table>
         <thead>
           <tr>
+            <th>#</th>
             <th>Cliente</th>
-            <th>Monto</th>
-            <th>Tasa</th>
-            <th>Tipo</th>
+            <th>Cobrador</th>
+            <th>Capital</th>
+            <th>Total</th>
+            <th>Cuota</th>
+            <th>Saldo</th>
+            <th>Avance</th>
+            <th>Riesgo IA</th>
             <th>Estado</th>
-            <th>Fecha Inicio</th>
+            <th>Inicio</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @for (prestamo of prestamos; track prestamo.id) {
+          @for (prestamo of prestamosFiltrados; track prestamo.id) {
             <tr>
-              <td>{{ prestamo.clienteNombre || obtenerNombreCliente(prestamo.clienteId) }}</td>
+              <td>{{ prestamo.id }}</td>
+              <td>{{ prestamo.clienteNombre }}</td>
+              <td>{{ prestamo.cobradorNombre || '—' }}</td>
               <td>{{ prestamo.monto | currency }}</td>
-              <td>{{ prestamo.tasaInteres }}%</td>
-              <td>{{ prestamo.tipoLiquidacion }}</td>
+              <td>{{ prestamo.montoTotal | currency }} <small>({{ prestamo.tasaInteres }}%)</small></td>
+              <td>{{ prestamo.valorCuota | currency }} <small>{{ prestamo.tipoLiquidacion | lowercase }}</small></td>
+              <td><strong>{{ prestamo.saldoPendiente | currency }}</strong></td>
+              <td>
+                <div class="progress"><div [style.width.%]="progreso(prestamo)"></div></div>
+                <small>{{ prestamo.cuotasPagadas }}/{{ prestamo.numeroCuotas }}</small>
+              </td>
+              <td>
+                @if (prestamo.nivelRiesgo) {
+                  <span class="badge" [ngClass]="'riesgo-' + prestamo.nivelRiesgo.toLowerCase()"
+                        [title]="'Probabilidad al aprobar: ' + ((prestamo.probabilidadDefault ?? 0) * 100).toFixed(1) + '%'">
+                    {{ prestamo.nivelRiesgo }}{{ prestamo.aprobadoConAlerta ? ' ⚠' : '' }}
+                  </span>
+                } @else { — }
+              </td>
               <td><span [ngClass]="getEstadoClass(prestamo.estado)" class="badge">{{ prestamo.estado }}</span></td>
               <td>{{ prestamo.fechaInicio | date: 'dd/MM/yyyy' }}</td>
               <td>
-                <button class="btn btn-danger btn-sm" (click)="eliminarPrestamo(prestamo.id)">
-                  Eliminar
-                </button>
+                <button class="btn btn-danger btn-sm" (click)="eliminarPrestamo(prestamo.id)">Eliminar</button>
               </td>
             </tr>
+          } @empty {
+            <tr><td colspan="12" class="empty-state">Sin préstamos</td></tr>
           }
         </tbody>
       </table>
