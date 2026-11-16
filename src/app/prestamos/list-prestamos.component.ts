@@ -4,6 +4,7 @@ import { ClienteService } from '../services/cliente.service';
 import { CobranzaService, mensajeError } from '../services/cobranza.service';
 import { Prestamo, SimulacionPrestamo, SolicitudPrestamo, TipoLiquidacion } from '../models/prestamo.model';
 import { Cliente } from '../models/cliente.model';
+import { WebWorkerService, descargarArchivo } from '../services/web-worker.service';
 import { Cobrador, Scoring } from '../models/cobranza.model';
 
 @Component({
@@ -27,13 +28,36 @@ export class ListPrestamosComponent implements OnInit {
   guardando = false;
   error = '';
   filtroEstado = '';
+  exportando = false;
   tiposLiquidacion = Object.values(TipoLiquidacion) as TipoLiquidacion[];
 
   constructor(
     private prestamoService: PrestamoService,
     private clienteService: ClienteService,
-    private cobranzaService: CobranzaService
+    private cobranzaService: CobranzaService,
+    private workers: WebWorkerService
   ) {}
+
+  /** Exporta los préstamos filtrados a CSV (generado en un Web Worker). */
+  exportarCsv(): void {
+    this.exportando = true;
+    this.workers.csv({
+      columnas: [
+        { clave: 'id', titulo: 'ID' }, { clave: 'clienteNombre', titulo: 'Cliente' },
+        { clave: 'cobradorNombre', titulo: 'Cobrador' }, { clave: 'tipoLiquidacion', titulo: 'Liquidación' },
+        { clave: 'monto', titulo: 'Monto' }, { clave: 'montoTotal', titulo: 'Total a pagar' },
+        { clave: 'saldoPendiente', titulo: 'Saldo' }, { clave: 'cuotasPagadas', titulo: 'Cuotas pagadas' },
+        { clave: 'cuotasPendientes', titulo: 'Cuotas pendientes' }, { clave: 'estado', titulo: 'Estado' },
+        { clave: 'nivelRiesgo', titulo: 'Riesgo' }, { clave: 'probabilidadDefault', titulo: 'Prob. incumplimiento' },
+        { clave: 'fechaInicio', titulo: 'Inicio' }, { clave: 'fechaVencimiento', titulo: 'Vencimiento' }
+      ],
+      filas: this.prestamosFiltrados as unknown as Record<string, unknown>[]
+    }).subscribe({
+      next: (csv) => descargarArchivo(`prestamos-${new Date().toISOString().slice(0, 10)}.csv`, csv),
+      error: () => (this.error = 'No se pudo generar el CSV'),
+      complete: () => (this.exportando = false)
+    });
+  }
 
   ngOnInit(): void {
     this.cargarPrestamos();

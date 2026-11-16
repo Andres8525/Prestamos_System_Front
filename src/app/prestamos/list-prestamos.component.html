@@ -10,6 +10,10 @@
         <option value="PAGADO">Pagado</option>
       </select>
       <button class="btn btn-secondary" (click)="actualizarEstados()">Actualizar Estados</button>
+      <button class="btn btn-secondary" (click)="exportarCsv()" [disabled]="exportando || !prestamosFiltrados.length"
+              title="El archivo se genera en un Web Worker">
+        {{ exportando ? 'Generando…' : 'Exportar CSV' }}
+      </button>
       <button class="btn btn-primary" (click)="toggleFormulario()">
         {{ mostraFormulario ? 'Cancelar' : '+ Nuevo Préstamo' }}
       </button>
