@@ -110,3 +110,13 @@
   .card, .kpi, .table-wrapper { box-shadow: none !important; border-color: #ccc !important; break-inside: avoid; }
   .table-wrapper { max-height: none !important; overflow: visible !important; }
 }
+
+/* Teléfonos: barra superior compacta (saludo sin fecha, acciones juntas) y encabezados apilados */
+@media (max-width: 520px) {
+  .topbar-saludo small { display: none; }
+  .topbar-saludo strong { font-size: 14px; }
+  .topbar-acciones { gap: 8px; }
+  .page-header { flex-direction: column; align-items: stretch; gap: 12px; }
+  .page-header .header-actions { justify-content: flex-start; }
+  .page-header .subtitulo { font-size: 12px; }
+}
