@@ -34,6 +34,19 @@
           <input type="text" id="telefono" [(ngModel)]="nuevoCliente.telefono"
                  name="telefono" placeholder="Ingrese el teléfono" />
         </div>
+        <div class="form-group">
+          <label for="cobrador">Cobrador / Ruta</label>
+          <select id="cobrador" [(ngModel)]="nuevoCliente.cobradorId" name="cobrador">
+            <option [ngValue]="null">Sin asignar</option>
+            @for (c of cobradores; track c.id) {
+              <option [ngValue]="c.id">{{ c.nombre }} ({{ c.zona }})</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="orden">Orden de visita</label>
+          <input type="number" id="orden" min="1" [(ngModel)]="nuevoCliente.ordenRuta" name="orden" />
+        </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-success">Guardar</button>
         </div>
@@ -52,6 +65,7 @@
             <th>Nombre</th>
             <th>Dirección</th>
             <th>Teléfono</th>
+            <th>Ruta</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -62,6 +76,7 @@
               <td>{{ cliente.nombre }}</td>
               <td>{{ cliente.direccion }}</td>
               <td>{{ cliente.telefono }}</td>
+              <td>{{ cliente.cobradorNombre ? cliente.zona + ' · #' + (cliente.ordenRuta ?? '-') : '—' }}</td>
               <td class="actions-cell">
                 <button class="btn btn-primary btn-sm" (click)="editarCliente(cliente)">
                   Editar

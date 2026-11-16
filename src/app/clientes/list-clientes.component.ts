@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ClienteService } from '../services/cliente.service';
 import { Cliente } from '../models/cliente.model';
+import { Cobrador } from '../models/cobranza.model';
+import { CobranzaService } from '../services/cobranza.service';
 
 @Component({
   selector: 'app-list-clientes',
@@ -10,16 +12,18 @@ import { Cliente } from '../models/cliente.model';
 })
 export class ListClientesComponent implements OnInit {
   clientes: Cliente[] = [];
+  cobradores: Cobrador[] = [];
   nuevoCliente: Cliente = { cedula: '', nombre: '', direccion: '', telefono: '' };
   mostraFormulario = false;
   clienteEnEdicion: Cliente | null = null;
   cargando = false;
   error = '';
 
-  constructor(private clienteService: ClienteService) {}
+  constructor(private clienteService: ClienteService, private cobranzaService: CobranzaService) {}
 
   ngOnInit(): void {
     this.cargarClientes();
+    this.cobranzaService.obtenerCobradores(true).subscribe({ next: (d) => (this.cobradores = d) });
   }
 
   cargarClientes(): void {
