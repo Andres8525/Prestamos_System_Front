@@ -78,3 +78,28 @@ table tbody tr:nth-child(n + 6) { animation-delay: 0.17s; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Entrada de cada página al navegar */
+.main-content > *:not(router-outlet) { animation: entrar-pagina 0.35s var(--curva) both; }
+@keyframes entrar-pagina { from { opacity: 0; transform: translateY(8px); } }
+
+/* Esqueletos de carga: bloques con brillo que se desplaza mientras llegan los datos */
+.esqueleto {
+  position: relative; overflow: hidden; border-radius: var(--radio-sm);
+  background: var(--superficie-2); min-height: 14px;
+}
+.esqueleto::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.18), transparent);
+  animation: barrido 1.3s ease-in-out infinite;
+}
+@keyframes barrido { to { transform: translateX(100%); } }
+.esqueleto-tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.esqueleto-tarjeta { height: 118px; border-radius: var(--radio-lg); }
+.esqueleto-fila { height: 16px; margin: 14px 0; }
+.esqueleto-fila:nth-child(2n) { width: 85%; }
+.esqueleto-fila:nth-child(3n) { width: 65%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .main-content > *, .esqueleto::after { animation: none !important; }
+}
