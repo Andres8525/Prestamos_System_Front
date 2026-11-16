@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -13,13 +13,22 @@ import { ListCobradoresComponent } from './cobradores/list-cobradores.component'
 import { RutaCobroComponent } from './ruta/ruta-cobro.component';
 import { CuadreCajaComponent } from './caja/cuadre-caja.component';
 import { ScoringRiesgoComponent } from './scoring/scoring-riesgo.component';
+import { LoginComponent } from './auth/login.component';
+import { RegisterComponent } from './auth/register.component';
+import { ShellComponent } from './layout/shell.component';
+import { authInterceptor } from './auth/auth.interceptor';
 
 // Standalone components
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
+import { ToastsComponent } from './components/toasts/toasts.component';
+import { AuthMarcaComponent } from './auth/auth-marca.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    ShellComponent,
+    LoginComponent,
+    RegisterComponent,
     DashboardComponent,
     ListClientesComponent,
     ListPrestamosComponent,
@@ -34,9 +43,11 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    NavMenuComponent
+    NavMenuComponent,
+    ToastsComponent,
+    AuthMarcaComponent
   ],
-  providers: [provideHttpClient()],
+  providers: [provideHttpClient(withInterceptors([authInterceptor]))],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

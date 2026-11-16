@@ -1,13 +1,1 @@
-.app-container {
-  display: flex;
-  height: 100vh;
-
-  .main-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 28px 32px;
-    background-color: #f1f5f9;
-    transition: margin-left 0.25s ease;
-    min-width: 0;
-  }
-}
+/* El layout vive en src/styles/layout.css */
